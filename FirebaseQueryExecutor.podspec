@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
     s.name             = 'FirebaseQueryExecutor'
-    s.version          = '0.1.1'
+    s.version          = '0.1.2'
     s.summary          = 'A short description of FirebaseQueryExecutor.'
     
     s.description      = <<-DESC
