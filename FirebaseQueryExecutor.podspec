@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
     s.name             = 'FirebaseQueryExecutor'
-    s.version          = '0.1.2'
+    s.version          = '0.1.3'
     s.summary          = 'A short description of FirebaseQueryExecutor.'
     
     s.description      = <<-DESC
@@ -31,6 +31,6 @@ Pod::Spec.new do |s|
     # s.frameworks = 'UIKit', 'MapKit'
     s.dependency 'Firebase/Firestore', '4.9.0'
     s.dependency 'Firebase', '4.9.0'
-    s.dependency 'RxSwift', '4.0'
-    s.dependency 'SwiftyJSON', '4.0'
+    s.dependency 'RxSwift', '~> 4.0'
+    s.dependency 'SwiftyJSON', '~> 4.0'
 end
