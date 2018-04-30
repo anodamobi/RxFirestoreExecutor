@@ -8,14 +8,14 @@
 
 import Foundation
 
-enum ErrorStrings: String {
+public enum ErrorStrings: String {
     case insufficientArguments = "Insufficien Arguments in call methods. ExecutorError: 0"
     case emptyOrNilParametr = "Nil or Empty parametr disallowed. ExecutorError: 1"
     case emptyDataSet = "Data set is empty. ExecutorError: 2"
     case emptyKeyValue = "Sent parametr or Object ID is empty. ExecutorError: 3"
 }
 
-enum ExecutorError: Error {
+public enum ExecutorError: Error {
     case insufficientArguments(ErrorStrings)
     case emptyOrNilParametr(ErrorStrings)
     case emptyDataSet(ErrorStrings)
