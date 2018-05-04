@@ -28,11 +28,11 @@ PODS:
     - Protobuf (~> 3.1)
   - FirebaseInstanceID (2.0.10):
     - FirebaseCore (~> 4.0)
-  - FirebaseQueryExecutor (0.1.0):
+  - FirebaseQueryExecutor (0.1.5):
     - Firebase (= 4.9.0)
     - Firebase/Firestore (= 4.9.0)
-    - RxSwift (= 4.0)
-    - SwiftyJSON (= 4.0)
+    - RxSwift (~> 4.0)
+    - SwiftyJSON (~> 4.0)
   - GoogleToolboxForMac/Defines (2.1.4)
   - "GoogleToolboxForMac/NSData+zlib (2.1.4)":
     - GoogleToolboxForMac/Defines (= 2.1.4)
@@ -98,7 +98,7 @@ SPEC CHECKSUMS:
   FirebaseCore: 3bd047463058fa6b5d312c97502c52e45401cdfb
   FirebaseFirestore: a6db7a47c6a47d26069892d7db39f7792f2f7f9a
   FirebaseInstanceID: 8d20d890d65c917f9f7d9950b6e10a760ad34321
-  FirebaseQueryExecutor: a3ca94b1947e5140305ababf6432c5940612f5b7
+  FirebaseQueryExecutor: 1b38b1c1165dbc40a55282a2b2b39ac4bbfc4cfa
   GoogleToolboxForMac: 91c824d21e85b31c2aae9bb011c5027c9b4e738f
   gRPC: 70703dc9ba31c72341fc7f37745cc1c379edee96
   gRPC-Core: 164639cd8ae18ca8b65477fafb2efbaecf4f181a

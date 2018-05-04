@@ -13,6 +13,8 @@ public enum ErrorStrings: String {
     case emptyOrNilParametr = "Nil or Empty parametr disallowed. ExecutorError: 1"
     case emptyDataSet = "Data set is empty. ExecutorError: 2"
     case emptyKeyValue = "Sent parametr or Object ID is empty. ExecutorError: 3"
+    
+    case emptySnapshotData = "Snapshot data is empty! ExecutorError: 5"
 }
 
 public enum ExecutorError: Error {
@@ -20,6 +22,8 @@ public enum ExecutorError: Error {
     case emptyOrNilParametr(ErrorStrings)
     case emptyDataSet(ErrorStrings)
     case emptyKeyValue(ErrorStrings)
+    
+    case emptySnapshotData(ErrorStrings)
     
     case undefined
 }
@@ -31,6 +35,8 @@ extension ExecutorError: LocalizedError {
         case .emptyKeyValue(let keyValue): return keyValue.rawValue
         case .emptyOrNilParametr(let nilParam): return nilParam.rawValue
         case .insufficientArguments(let insufParams): return insufParams.rawValue
+            
+        case .emptySnapshotData(let emptyData): return emptyData.rawValue
         default:
             return "Undefined error!"
         }

@@ -49,10 +49,14 @@ class ExecutorSingle: ExecutorFirestoreEntity {
                 return Disposables.create()
             }
             
-            
             let colRef = self.db.collection(collection)
-            colRef.getDocuments(completion: { (snapshot, error) in
+            colRef.getDocuments(completion: { [unowned self] (snapshot, error) in
                 self.onError(single, error: error)
+                
+                guard !self.isEmpty(snapshotDocs: snapshot?.documents) else {
+                    self.onError(single, error: ExecutorError.emptySnapshotData(.emptySnapshotData))
+                    return
+                }
                 
                 if let objects = snapshot?.documents.map({ (single) -> JSON in
                     return JSON(self.composeObject(document: single))
@@ -85,8 +89,13 @@ class ExecutorSingle: ExecutorFirestoreEntity {
             let colRef = self.db.collection(collection)
             colRef
                 .whereField(queryFilter, isEqualTo:param)
-                .getDocuments(completion: { (snapshot, error) in
+                .getDocuments(completion: { [unowned self] (snapshot, error) in
                     self.onError(single, error: error)
+                    
+                    guard !self.isEmpty(snapshotDocs: snapshot?.documents) else {
+                        self.onError(single, error: ExecutorError.emptySnapshotData(.emptySnapshotData))
+                        return
+                    }
                     
                     if let objects = snapshot?.documents.map({ (single) -> [String: Any] in
                         return self.composeObject(document: single)
@@ -112,10 +121,16 @@ class ExecutorSingle: ExecutorFirestoreEntity {
             }
             
             let colRef = self.db.collection(collection)
-            colRef.document(singleDoc).getDocument(completion: { (snapshot, error) in
+            colRef.document(singleDoc).getDocument(completion: { [unowned self] (snapshot, error) in
                 self.onError(single, error: error)
                 
+                guard !self.isEmpty(snapshotData: snapshot?.data()) else {
+                    self.onError(single, error: ExecutorError.emptySnapshotData(.emptySnapshotData))
+                    return
+                }
+                
                 if var object: [String:Any] = snapshot?.data() {
+                    
                     object["uid"] = snapshot?.documentID
                     object["id"] =  snapshot?.documentID
                     return single(.success(object))
@@ -148,6 +163,11 @@ class ExecutorSingle: ExecutorFirestoreEntity {
             
             query.getDocuments(completion: { (snapshot, error) in
                 self.onError(single, error: error)
+                
+                guard !self.isEmpty(snapshotDocs: snapshot?.documents) else {
+                    self.onError(single, error: ExecutorError.emptySnapshotData(.emptySnapshotData))
+                    return
+                }
                 
                 if let objects = snapshot?.documents.map({ (document) -> JSON in
                     return JSON(self.composeObject(document: document))
