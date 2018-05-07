@@ -131,7 +131,11 @@ class ExecutorFirestoreEntity: QueryExecutorProtocol {
     
     func isEmpty(snapshotDocs: [DocumentSnapshot]?) -> Bool {
         if snapshotDocs?.count == 1 {
-            return isEmpty(snapshotDoc: snapshotDocs?.first!)
+            if let doc = snapshotDocs?.first {
+                return isEmpty(snapshotDoc: doc)
+            } else {
+                return true
+            }
         }
         return (snapshotDocs?.count) ?? -1 < 0
     }
