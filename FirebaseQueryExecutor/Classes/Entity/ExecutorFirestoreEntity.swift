@@ -126,18 +126,16 @@ class ExecutorFirestoreEntity: QueryExecutorProtocol {
     }
     
     func isEmpty(snapshotData: [String:Any]?) -> Bool {
-        return snapshotData == nil || (snapshotData?.isEmpty) ?? true
+        return snapshotData == nil
     }
     
     func isEmpty(snapshotDocs: [DocumentSnapshot]?) -> Bool {
-        if snapshotDocs?.count == 1 {
-            if let doc = snapshotDocs?.first {
-                return isEmpty(snapshotDoc: doc)
-            } else {
-                return true
-            }
+        
+        if (snapshotDocs?.count) ?? -1 >= 0 {
+            return false
+        } else {
+            return true
         }
-        return (snapshotDocs?.count) ?? -1 < 0
     }
     
     private func isEmpty(snapshotDoc: DocumentSnapshot) -> Bool {
