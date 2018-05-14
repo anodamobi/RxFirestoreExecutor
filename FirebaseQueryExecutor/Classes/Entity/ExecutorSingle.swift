@@ -15,6 +15,8 @@ import SwiftyJSON
 
 class ExecutorSingle: ExecutorFirestoreEntity {
     
+    let savior: Savior = Savior()
+    
     override init() {
         super.init()
     }
@@ -41,20 +43,28 @@ class ExecutorSingle: ExecutorFirestoreEntity {
         return loadCollection()
     }
     
+    
     private func loadCollection() -> Single<Any> {
+        
         return Single.create(subscribe: { [unowned self] (single) in
             
-            guard let collection = self.collectionString, !collection.isEmpty else {
-                single(.error(ExecutorError.emptyOrNilParametr(ErrorStrings.emptyOrNilParametr)))
+            let collection = self.collectionString
+            do {
+                try self.savior.saveSingle(collection: collection)
+            } catch {
+                single(.error(error))
                 return Disposables.create()
             }
             
-            let colRef = self.db.collection(collection)
+            
+            let colRef = self.db.collection(collection ?? "")
             colRef.getDocuments(completion: { [weak self] (snapshot, error) in
                 self?.onError(single, error: error)
                 
-                guard !((self?.isEmpty(snapshotDocs: snapshot?.documents)) ?? true) else {
-                    self?.onError(single, error: ExecutorError.emptySnapshotData(.emptySnapshotData))
+                do {
+                    try self?.savior.saveSnapshotDocuments(documents: snapshot?.documents)
+                } catch {
+                    self?.onError(single, error: error)
                     return
                 }
                 
@@ -71,28 +81,24 @@ class ExecutorSingle: ExecutorFirestoreEntity {
     private func load(queryFilter: String, param: String) -> Single<Any> {
         return Single.create(subscribe: { [unowned self] (single) in
             
-            guard self.isEmpty(document: queryFilter) == false else {
-                single(.error(ExecutorError.emptyKeyValue(ErrorStrings.emptyKeyValue)))
+            let collection = self.collectionString
+            do {
+                try self.savior.saveQuery(filterParams: (queryFilter, param), collection: collection)
+            } catch {
+                single(.error(error))
                 return Disposables.create()
             }
             
-            guard self.isEmpty(document: param) == false else {
-                single(.error(ExecutorError.emptyKeyValue(ErrorStrings.emptyKeyValue)))
-                return Disposables.create()
-            }
             
-            guard let collection = self.collectionString, !collection.isEmpty else {
-                single(.error(ExecutorError.emptyOrNilParametr(ErrorStrings.emptyOrNilParametr)))
-                return Disposables.create()
-            }
-            
-            let colRef = self.db.collection(collection)
+            let colRef = self.db.collection(collection ?? "")
             colRef.whereField(queryFilter, isEqualTo:param)
                 .getDocuments(completion: { [weak self] (snapshot, error) in
                     self?.onError(single, error: error)
                     
-                    guard !((self?.isEmpty(snapshotDocs: snapshot?.documents)) ?? true) else {
-                        self?.onError(single, error: ExecutorError.emptySnapshotData(.emptySnapshotData))
+                    do {
+                        try self?.savior.saveSnapshotDocuments(documents: snapshot?.documents)
+                    } catch {
+                        self?.onError(single, error: error)
                         return
                     }
                     
@@ -109,22 +115,23 @@ class ExecutorSingle: ExecutorFirestoreEntity {
     private func load(singleDoc: String) -> Single<Any> {
         return Single.create(subscribe: { [unowned self] (single) in
             
-            guard let collection = self.collectionString, !collection.isEmpty else {
-                single(.error(ExecutorError.emptyOrNilParametr(ErrorStrings.emptyOrNilParametr)))
+            let collection = self.collectionString
+
+            do {
+                try self.savior.saveSingleDoc(collection: collection, singleDoc: singleDoc)
+            } catch {
+                single(.error(error))
                 return Disposables.create()
             }
             
-            guard singleDoc != "" else {
-                single(.error(ExecutorError.emptyOrNilParametr(ErrorStrings.emptyOrNilParametr)))
-                return Disposables.create()
-            }
-            
-            let colRef = self.db.collection(collection)
+            let colRef = self.db.collection(collection ?? "")
             colRef.document(singleDoc).getDocument(completion: { [weak self] (snapshot, error) in
                 self?.onError(single, error: error)
                 
-                guard !((self?.isEmpty(snapshotData: snapshot?.data())) ?? true) else {
-                    self?.onError(single, error: ExecutorError.emptySnapshotData(.emptySnapshotData))
+                do {
+                    try self?.savior.saveSnapshotData(snapshot: snapshot)
+                } catch {
+                    self?.onError(single, error: error)
                     return
                 }
                 
@@ -142,19 +149,17 @@ class ExecutorSingle: ExecutorFirestoreEntity {
     private func load(argTrain: [(String, String)]) -> Single<Any> {
         
         return Single.create(subscribe: { [unowned self] (single) in
+            let collection = self.collectionString
             
-            guard let collection = self.collectionString, !collection.isEmpty else {
-                single(.error(ExecutorError.emptyOrNilParametr(ErrorStrings.emptyOrNilParametr)))
+            do {
+                try self.savior.saveArgTrain(traitList: argTrain, collection: collection)
+            } catch {
+                single(.error(error))
                 return Disposables.create()
             }
             
-            let colRef = self.db.collection(collection)
             
-            guard argTrain.count < 1 else {
-                single(.error(ExecutorError.emptyOrNilParametr(ErrorStrings.emptyOrNilParametr)))
-                return Disposables.create()
-            }
-            
+            let colRef = self.db.collection(collection ?? "")
             var query = colRef.whereField((argTrain.first?.0)!, isEqualTo: (argTrain.first?.1)!)
             
             self.create(query: &query, argTrain: argTrain)
@@ -163,8 +168,10 @@ class ExecutorSingle: ExecutorFirestoreEntity {
             query.getDocuments(completion: { [weak self] (snapshot, error) in
                 self?.onError(single, error: error)
                 
-                guard !((self?.isEmpty(snapshotDocs: snapshot?.documents)) ?? true) else {
-                    self?.onError(single, error: ExecutorError.emptySnapshotData(.emptySnapshotData))
+                do {
+                    try self?.savior.saveSnapshotDocuments(documents: snapshot?.documents)
+                } catch {
+                    self?.onError(single, error: error)
                     return
                 }
                 
@@ -181,31 +188,17 @@ class ExecutorSingle: ExecutorFirestoreEntity {
     private func updateDocument(dataDict: [String: Any]?, docID: String?) -> Single<Any> {
         return Single.create(subscribe: { [unowned self] (single) in
             
-            guard let collection = self.collectionString, !collection.isEmpty else {
-                single(.error(ExecutorError.emptyOrNilParametr(ErrorStrings.emptyOrNilParametr)))
+            let collection = self.collectionString
+            do {
+                try self.savior.saveUploadData(data: dataDict, docRef: docID, collection: collection)
+            } catch {
+                single(.error(error))
                 return Disposables.create()
             }
             
-            guard docID != nil else {
-                single(.error(ExecutorError.insufficientArguments(ErrorStrings.insufficientArguments)))
-                return Disposables.create()
-            }
             
-            guard self.isEmpty(document: docID) == false else {
-                single(.error(ExecutorError.emptyKeyValue(ErrorStrings.emptyKeyValue)))
-                return Disposables.create()
-            }
-            
-            // checking key is not empty, value will always be true or false
-            guard let keys = dataDict?.keys, keys.first(where: { (string) -> Bool in
-                return string == ""
-            }) == nil else {
-                single(.error(ExecutorError.emptyDataSet(ErrorStrings.emptyDataSet)))
-                return Disposables.create()
-            }
-            
-            let docRef = self.db.collection(collection).document(docID!)
-            docRef.setData(dataDict!, options: .merge(), completion: { [weak self] (error) in
+            let docRef = self.db.collection(collection ?? "").document(docID ?? "")
+            docRef.setData(dataDict ?? [:], options: .merge(), completion: { [weak self] (error) in
                 self?.onError(single, error: error)
                 
                 single(.success(true))
@@ -214,7 +207,4 @@ class ExecutorSingle: ExecutorFirestoreEntity {
             return Disposables.create()
         })
     }
-    
-    
-    
 }

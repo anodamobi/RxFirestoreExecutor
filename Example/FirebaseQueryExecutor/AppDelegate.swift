@@ -8,18 +8,21 @@
 
 import UIKit
 import FirebaseQueryExecutor
-
-
+import RxSwift
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
-    var executor = QueryExecutor<Target>()
+    let executor = QueryExecutor<Target>()
+    let bag = DisposeBag()
 
     func application(_ application: UIApplication,
                      didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
-        executor.request(.test)
+        executor.request(.test).subscribe(onSuccess: { (_) in
+        }) { (error) in
+            print(error)
+        }.disposed(by: bag)
         return true
     }
 

@@ -13,6 +13,8 @@ import FirebaseFirestore
 
 class ExecutorObserveable: ExecutorFirestoreEntity {
     
+    let savior: Savior = Savior()
+    
     override init() {
         super.init()
     }
@@ -38,17 +40,22 @@ class ExecutorObserveable: ExecutorFirestoreEntity {
     private func observeCollection() -> Observable<Any> {
         return Observable.create({ [unowned self] (observe) in
             
-            guard self.isEmpty(collection: self.collectionString ?? "") == false else {
-                observe.onError(ExecutorError.emptyKeyValue(ErrorStrings.emptyKeyValue))
+            do {
+                try self.savior.saveSingle(collection: self.collectionString ?? "")
+            } catch {
+                observe.onError(error)
                 return Disposables.create()
             }
+            
             
             let colRef = self.db.collection(self.collectionString!)
             let listener = colRef.addSnapshotListener({ [weak self] (snapshot, error) in
                 self?.onError(observe, error: error)
                 
-                guard !((self?.isEmpty(snapshotDocs: (snapshot?.documents)!)) ?? true) else {
-                    self?.onError(observe, error: ExecutorError.emptySnapshotData(.emptySnapshotData))
+                do {
+                    try self?.savior.saveSnapshotDocuments(documents: snapshot?.documents)
+                } catch {
+                    self?.onError(observe, error: error)
                     return
                 }
                 
@@ -69,24 +76,24 @@ class ExecutorObserveable: ExecutorFirestoreEntity {
         
         return Observable.create({ [unowned self] (observe) in
 
-            //TODO: pavel - get off copy/paste
-            guard self.isEmpty(document: documentID) == false else {
-                observe.onError(ExecutorError.emptyKeyValue(ErrorStrings.emptyKeyValue))
+            let collection = self.collectionString
+            do {
+                try self.savior.saveSingleDoc(collection: collection, singleDoc: documentID)
+            } catch {
+                observe.onError(error)
                 return Disposables.create()
             }
             
-            guard let collection = self.collectionString, !collection.isEmpty else {
-                observe.onError(ExecutorError.emptyOrNilParametr(.emptyOrNilParametr))
-                return Disposables.create()
-            }
             
-            let colRef = self.db.collection(collection).document(documentID)
+            let colRef = self.db.collection(collection ?? "").document(documentID)
             
             let listener = colRef.addSnapshotListener({ [weak self] (snapshot, error) in
                 self?.onError(observe, error: error)
                 
-                guard !((self?.isEmpty(snapshotData: snapshot?.data())) ?? true) else {
-                    self?.onError(observe, error: ExecutorError.emptySnapshotData(.emptySnapshotData))
+                do {
+                    try self?.savior.saveSnapshotData(snapshot: snapshot)
+                } catch {
+                    self?.onError(observe, error: error)
                     return
                 }
                 
@@ -108,41 +115,27 @@ class ExecutorObserveable: ExecutorFirestoreEntity {
         
         return Observable.create({ [unowned self] (observe) -> Disposable in
             
-            guard let collection = self.collectionString, !collection.isEmpty else {
-                observe.onError(ExecutorError.emptyOrNilParametr(ErrorStrings.emptyOrNilParametr))
+            let collection = self.collectionString
+            do {
+                try self.savior.saveArgTrain(traitList: argTrain, collection: collection)
+            } catch {
+                observe.onError(error)
                 return Disposables.create()
             }
             
-            //TODO: pavel - get off copy/paste
-            guard self.isEmpty(document: self.collectionString ?? "") == false else {
-                observe.onError(ExecutorError.emptyKeyValue(ErrorStrings.emptyKeyValue))
-                return Disposables.create()
-            }
-            
-            guard self.isEmpty(argTrain: argTrain) == false else {
-                observe.onError(ExecutorError.insufficientArguments(ErrorStrings.insufficientArguments))
-                return Disposables.create()
-            }
-            
-            let colRef = self.db.collection(collection)
-            
-            guard argTrain != nil else {
-                observe.onError(ExecutorError.emptyOrNilParametr(ErrorStrings.emptyOrNilParametr))
-                return Disposables.create()
-            }
-            
+            let colRef = self.db.collection(collection ?? "")
             var query = colRef.whereField((argTrain?.first?.0) ?? "", isEqualTo: (argTrain?.first?.1) ?? "")
             
             self.create(query: &query, argTrain: argTrain)
             self.orderQuery(&query)
             
-            
-            
             let listener = query.addSnapshotListener({ [weak self] (snapshot, error) in
                 self?.onError(observe, error: error)
                 
-                guard !((self?.isEmpty(snapshotDocs: snapshot?.documents)) ?? true) else {
-                    self?.onError(observe, error: ExecutorError.emptySnapshotData(.emptySnapshotData))
+                do {
+                    try self?.savior.saveSnapshotDocuments(documents: snapshot?.documents)
+                } catch {
+                    self?.onError(observe, error: error)
                     return
                 }
                 
@@ -175,30 +168,18 @@ class ExecutorObserveable: ExecutorFirestoreEntity {
     }
     
     
-    private func observeNestedCollection(documentID:String, nestedCollection:String) -> Observable<Any> {
+    private func observeNestedCollection(documentID: String, nestedCollection:String) -> Observable<Any> {
         return Observable.create({ [unowned self] (observe) in
             
-            guard let collection = self.collectionString, !collection.isEmpty else {
-                observe.onError(ExecutorError.emptyOrNilParametr(ErrorStrings.emptyOrNilParametr))
+            let collection = self.collectionString
+            do {
+                try self.savior.saveNested(collection: collection, parentDoc: documentID, nestedCollection: nestedCollection)
+            } catch {
+                observe.onError(error)
                 return Disposables.create()
             }
             
-            guard self.isEmpty(collection: self.collectionString ?? "") == false else {
-                observe.onError(ExecutorError.emptyKeyValue(ErrorStrings.emptyKeyValue))
-                return Disposables.create()
-            }
-            
-            guard self.isEmpty(document: documentID) == false else{
-                observe.onError(ExecutorError.emptyKeyValue(ErrorStrings.emptyKeyValue))
-                return Disposables.create()
-            }
-            
-            guard self.isEmpty(collection: nestedCollection) == false else {
-                observe.onError(ExecutorError.emptyOrNilParametr(ErrorStrings.emptyOrNilParametr))
-                return Disposables.create()
-            }
-            
-            let colRef = self.db.collection(collection).document(documentID).collection(nestedCollection)
+            let colRef = self.db.collection(collection ?? "").document(documentID).collection(nestedCollection)
             
             let listener = colRef.addSnapshotListener({ [weak self] (snapshot, error) in
                 self?.onError(observe, error: error)

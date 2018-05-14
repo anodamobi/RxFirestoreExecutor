@@ -134,6 +134,10 @@ class ExecutorFirestoreEntity: QueryExecutorProtocol {
         return false
     }
     
+    func isEmpty(uploadData: [String: Any]?) -> Bool {
+        return isEmpty(snapshotData: uploadData)
+    }
+    
     func isEmpty(snapshotData: [String:Any]?) -> Bool {
         return snapshotData == nil
     }

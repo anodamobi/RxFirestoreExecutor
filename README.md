@@ -29,6 +29,7 @@ This will play role of your requests
 Create Extension for your enum to implement query data type for a specific request.
 ```
 import FirebaseQueryExecutor into a class.
+import RxSwift
 
 create property of class QueryExecutor<Target>()
 ```
