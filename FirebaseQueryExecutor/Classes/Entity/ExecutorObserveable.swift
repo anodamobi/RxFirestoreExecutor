@@ -44,16 +44,16 @@ class ExecutorObserveable: ExecutorFirestoreEntity {
             }
             
             let colRef = self.db.collection(self.collectionString!)
-            let listener = colRef.addSnapshotListener({ [unowned self] (snapshot, error) in
-                self.onError(observe, error: error)
+            let listener = colRef.addSnapshotListener({ [weak self] (snapshot, error) in
+                self?.onError(observe, error: error)
                 
-                guard !self.isEmpty(snapshotDocs: (snapshot?.documents)!) else {
-                    self.onError(observe, error: ExecutorError.emptySnapshotData(.emptySnapshotData))
+                guard !((self?.isEmpty(snapshotDocs: (snapshot?.documents)!)) ?? true) else {
+                    self?.onError(observe, error: ExecutorError.emptySnapshotData(.emptySnapshotData))
                     return
                 }
                 
                 if let objects = snapshot?.documents.map({ (obj) -> JSON in
-                    return JSON(self.composeObject(document: obj))
+                    return JSON(self?.composeObject(document: obj) ?? [:])
                 }) {
                     observe.onNext(objects)
                 }
@@ -82,11 +82,11 @@ class ExecutorObserveable: ExecutorFirestoreEntity {
             
             let colRef = self.db.collection(collection).document(documentID)
             
-            let listener = colRef.addSnapshotListener({ [unowned self] (snapshot, error) in
-                self.onError(observe, error: error)
+            let listener = colRef.addSnapshotListener({ [weak self] (snapshot, error) in
+                self?.onError(observe, error: error)
                 
-                guard !self.isEmpty(snapshotData: snapshot?.data()) else {
-                    self.onError(observe, error: ExecutorError.emptySnapshotData(.emptySnapshotData))
+                guard !((self?.isEmpty(snapshotData: snapshot?.data())) ?? true) else {
+                    self?.onError(observe, error: ExecutorError.emptySnapshotData(.emptySnapshotData))
                     return
                 }
                 
@@ -138,19 +138,19 @@ class ExecutorObserveable: ExecutorFirestoreEntity {
             
             
             
-            let listener = query.addSnapshotListener({ [unowned self] (snapshot, error) in
-                self.onError(observe, error: error)
+            let listener = query.addSnapshotListener({ [weak self] (snapshot, error) in
+                self?.onError(observe, error: error)
                 
-                guard !self.isEmpty(snapshotDocs: snapshot?.documents) else {
-                    self.onError(observe, error: ExecutorError.emptySnapshotData(.emptySnapshotData))
+                guard !((self?.isEmpty(snapshotDocs: snapshot?.documents)) ?? true) else {
+                    self?.onError(observe, error: ExecutorError.emptySnapshotData(.emptySnapshotData))
                     return
                 }
                 
                 var objects: [[String: Any]]?
                 if ExecutorSettings.shared.shouldObserveOnlyDiffs {
-                    objects = self.singleDiffs(snapshot: snapshot)
+                    objects = self?.singleDiffs(snapshot: snapshot)
                 } else {
-                    objects = self.allDocuments(snapshot: snapshot)
+                    objects = self?.allDocuments(snapshot: snapshot)
                 }
                 
                 observe.onNext(objects as Any)
@@ -200,12 +200,12 @@ class ExecutorObserveable: ExecutorFirestoreEntity {
             
             let colRef = self.db.collection(collection).document(documentID).collection(nestedCollection)
             
-            let listener = colRef.addSnapshotListener({ (snapshot, error) in
-                self.onError(observe, error: error)
+            let listener = colRef.addSnapshotListener({ [weak self] (snapshot, error) in
+                self?.onError(observe, error: error)
                 
                 let objects = snapshot?.documentChanges.map({ (diff) -> [String: Any] in
                     
-                    return self.composeObject(document: diff.document)
+                    return self?.composeObject(document: diff.document) ?? [:]
                 })
                 
                 observe.onNext(objects as Any)

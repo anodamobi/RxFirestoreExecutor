@@ -61,7 +61,12 @@ class ExecutorFirestoreEntity: QueryExecutorProtocol {
         case .and:
             if  let amount = argTrain?.count, amount > 1 {
                 for index in 1..<amount {
-                    query = query.whereField(argTrain![index].fieldName, isEqualTo: argTrain![index].expectedValue)
+                    if let fieldName: String = argTrain?[index].fieldName {
+                        if let expectedValue: String = argTrain?[index].expectedValue {
+                            query = query.whereField(fieldName, isEqualTo: expectedValue)
+                        }
+                    }
+                    
                 }
             }
         case .or: //TODO: pavel -Will be used little bit later
@@ -76,15 +81,19 @@ class ExecutorFirestoreEntity: QueryExecutorProtocol {
         }
     }
     
-    func onError(_ observe: AnyObserver<Any>, error: Error?) {
-        if let error = error {
-            observe.onError(error)
+    func onError(_ observe: AnyObserver<Any>?, error: Error?) {
+        if let err = error {
+            if let thread = observe {
+                thread.onError(err)
+            }
         }
     }
     
-    func onError (_ single: ((SingleEvent<Any>) -> ()), error: Error?) {
-        if let error = error {
-            single(.error(error))
+    func onError (_ single: ((SingleEvent<Any>) -> ())?, error: Error?) {
+        if let err = error {
+            if let thread = single {
+                thread(.error(err))
+            }
         }
     }
     

@@ -50,16 +50,16 @@ class ExecutorSingle: ExecutorFirestoreEntity {
             }
             
             let colRef = self.db.collection(collection)
-            colRef.getDocuments(completion: { [unowned self] (snapshot, error) in
-                self.onError(single, error: error)
+            colRef.getDocuments(completion: { [weak self] (snapshot, error) in
+                self?.onError(single, error: error)
                 
-                guard !self.isEmpty(snapshotDocs: snapshot?.documents) else {
-                    self.onError(single, error: ExecutorError.emptySnapshotData(.emptySnapshotData))
+                guard !((self?.isEmpty(snapshotDocs: snapshot?.documents)) ?? true) else {
+                    self?.onError(single, error: ExecutorError.emptySnapshotData(.emptySnapshotData))
                     return
                 }
                 
                 if let objects = snapshot?.documents.map({ (single) -> JSON in
-                    return JSON(self.composeObject(document: single))
+                    return JSON(self?.composeObject(document: single) ?? [:])
                 }) {
                     single(.success(objects))
                 }
@@ -87,18 +87,17 @@ class ExecutorSingle: ExecutorFirestoreEntity {
             }
             
             let colRef = self.db.collection(collection)
-            colRef
-                .whereField(queryFilter, isEqualTo:param)
-                .getDocuments(completion: { [unowned self] (snapshot, error) in
-                    self.onError(single, error: error)
+            colRef.whereField(queryFilter, isEqualTo:param)
+                .getDocuments(completion: { [weak self] (snapshot, error) in
+                    self?.onError(single, error: error)
                     
-                    guard !self.isEmpty(snapshotDocs: snapshot?.documents) else {
-                        self.onError(single, error: ExecutorError.emptySnapshotData(.emptySnapshotData))
+                    guard !((self?.isEmpty(snapshotDocs: snapshot?.documents)) ?? true) else {
+                        self?.onError(single, error: ExecutorError.emptySnapshotData(.emptySnapshotData))
                         return
                     }
                     
                     if let objects = snapshot?.documents.map({ (single) -> [String: Any] in
-                        return self.composeObject(document: single)
+                        return self?.composeObject(document: single) ?? [:]
                     }) {
                         single(.success(objects))
                     }
@@ -121,11 +120,11 @@ class ExecutorSingle: ExecutorFirestoreEntity {
             }
             
             let colRef = self.db.collection(collection)
-            colRef.document(singleDoc).getDocument(completion: { [unowned self] (snapshot, error) in
-                self.onError(single, error: error)
+            colRef.document(singleDoc).getDocument(completion: { [weak self] (snapshot, error) in
+                self?.onError(single, error: error)
                 
-                guard !self.isEmpty(snapshotData: snapshot?.data()) else {
-                    self.onError(single, error: ExecutorError.emptySnapshotData(.emptySnapshotData))
+                guard !((self?.isEmpty(snapshotData: snapshot?.data())) ?? true) else {
+                    self?.onError(single, error: ExecutorError.emptySnapshotData(.emptySnapshotData))
                     return
                 }
                 
@@ -161,16 +160,16 @@ class ExecutorSingle: ExecutorFirestoreEntity {
             self.create(query: &query, argTrain: argTrain)
             self.orderQuery(&query)
             
-            query.getDocuments(completion: { (snapshot, error) in
-                self.onError(single, error: error)
+            query.getDocuments(completion: { [weak self] (snapshot, error) in
+                self?.onError(single, error: error)
                 
-                guard !self.isEmpty(snapshotDocs: snapshot?.documents) else {
-                    self.onError(single, error: ExecutorError.emptySnapshotData(.emptySnapshotData))
+                guard !((self?.isEmpty(snapshotDocs: snapshot?.documents)) ?? true) else {
+                    self?.onError(single, error: ExecutorError.emptySnapshotData(.emptySnapshotData))
                     return
                 }
                 
                 if let objects = snapshot?.documents.map({ (document) -> JSON in
-                    return JSON(self.composeObject(document: document))
+                    return JSON(self?.composeObject(document: document) ?? [:])
                 }) {
                     single(.success(objects))
                 }
@@ -206,8 +205,8 @@ class ExecutorSingle: ExecutorFirestoreEntity {
             }
             
             let docRef = self.db.collection(collection).document(docID!)
-            docRef.setData(dataDict!, options: .merge(), completion: { (error) in
-                self.onError(single, error: error)
+            docRef.setData(dataDict!, options: .merge(), completion: { [weak self] (error) in
+                self?.onError(single, error: error)
                 
                 single(.success(true))
             })

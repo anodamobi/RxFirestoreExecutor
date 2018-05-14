@@ -20,6 +20,32 @@ it, simply add the following line to your Podfile:
 pod 'FirebaseQueryExecutor'
 ```
 
+## Usage
+
+
+Create File with enum confirms protocol QueryTargetProtocol
+This will play role of your requests
+
+Create Extension for your enum to implement query data type for a specific request.
+```
+import FirebaseQueryExecutor into a class.
+
+create property of class QueryExecutor<Target>()
+```
+
+User request for a single load and observe to create Firebase Listener for data observing and dynamic changing.
+As an argument to your request/observe you will use a value from a target enum type
+```
+E.G. executor.request(.loadUser(userID))
+```
+
+Handle request/observe with RxSwift .subscribe/.observe
+
+That's all! You do not need to unsubscribe from Firebase Listener on executor's observe - on object death it will be
+removed automatically.
+
+
+
 ## Author
 
 Pavel Mosunov, pavel.mosunov@anoda.mobi
