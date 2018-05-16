@@ -63,11 +63,11 @@ class ExecutorSaviour: ExecutorFirestoreEntity {
             try self.saveSingle(collection: collection)
         }
         
-        guard self.isEmpty(document: docRef) else {
+        guard self.isEmpty(document: docRef) == false else {
             throw ExecutorError.insufficientArguments(.insufficientArguments)
         }
         
-        guard self.isEmpty(uploadData: data) else {
+        guard self.isEmpty(uploadData: data) == false else {
             throw ExecutorError.insufficientArguments(.insufficientArguments)
         }
         
