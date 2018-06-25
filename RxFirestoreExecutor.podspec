@@ -17,10 +17,10 @@ Pod::Spec.new do |s|
     DESC
     
     s.swift_version = '4.2'
-    s.homepage         = 'https://github.com/Pavel Mosunov/FirebaseQueryExecutor'
+    s.homepage         = 'https://github.com/anodamobi/RxFirestoreExecutor/'
     s.license          = { :type => 'MIT', :file => 'LICENSE' }
     s.author           = { 'Pavel Mosunov' => 'pavel.mosunov@anoda.mobi' }
-    s.source           = { :git => 'git@gitlab.anoda.mobi:open-source-public/firestore-query-executor.git', :tag => s.version.to_s }
+    s.source           = { :git => 'https://github.com/anodamobi/RxFirestoreExecutor.git', :tag => s.version.to_s }
     
     s.ios.deployment_target = '10.0'
     s.static_framework = true
