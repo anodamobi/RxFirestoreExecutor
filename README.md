@@ -5,18 +5,47 @@ Swift: 4.0
 
 ## Installation
 
-FirebaseQueryExecutor is available through [CocoaPods](https://cocoapods.org). To install
-it, simply add the following line to your Podfile:
-
 ```ruby
 pod 'RxFirestoreExecutor'
 ```
 
-## Usage
+## Description
 
+RxFirestoreExecutor is a MOYA style library that allows you to use Firebase/Firestore Query via Rx same as usual network request.
+The usage is similar to MOYA, so you can access your firestore database same way as a network request via moya.
+
+## Usage
 
 Create enum confirms protocol QueryTargetProtocol
 This will play role of your requests
+
+``` Swift
+
+enum QueryService {
+
+case updateData(id: String)
+}
+
+extension QueryService: QueryTargetProtocol {
+  //Only  collection is not optional.
+  
+  var collection: CollectionRef {
+    switch self {
+    case .updateData:
+      return "myCollection"
+    }
+  }
+  
+  var singleDocument: SingleDocument {
+    switch self {
+      case .updateData(let id):
+        return id
+    }
+  }
+  
+  // everthign else should return nil if not used.
+}
+```
 
 Create Extension for your enum to implement query data type for a specific request.
 ```
@@ -31,6 +60,14 @@ User request for a single load and observe to create Firebase Listener for data 
 As an argument to your request/observe you will use a value from a target enum type
 ```
 E.G. executor.request(.loadUser(userID))
+
+executor.request(.updateData(id: uid))
+            .mapTo(object: YourObject.self)
+            .subscribe(onSuccess: { model in
+              //Handle result
+        })  { error in
+                //Handle error
+            }.disposed(by: bag)
 ```
 
 Handle request/observe with RxSwift .subscribe/.observe
@@ -45,4 +82,4 @@ Pavel Mosunov, pavel.mosunov@anoda.mobi
 
 ## License
 
-FirebaseQueryExecutor is available under the MIT license. See the LICENSE file for more info.
+RxFirestoreExecutor is available under the MIT license. See the LICENSE file for more info.
