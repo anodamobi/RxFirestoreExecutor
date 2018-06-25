@@ -1,10 +1,10 @@
 PODS:
-  - BoringSSL (10.0.2):
-    - BoringSSL/Implementation (= 10.0.2)
-    - BoringSSL/Interface (= 10.0.2)
-  - BoringSSL/Implementation (10.0.2):
-    - BoringSSL/Interface (= 10.0.2)
-  - BoringSSL/Interface (10.0.2)
+  - BoringSSL (10.0.5):
+    - BoringSSL/Implementation (= 10.0.5)
+    - BoringSSL/Interface (= 10.0.5)
+  - BoringSSL/Implementation (10.0.5):
+    - BoringSSL/Interface (= 10.0.5)
+  - BoringSSL/Interface (10.0.5)
   - Firebase (4.9.0):
     - Firebase/Core (= 4.9.0)
   - Firebase/Core (4.9.0):
@@ -28,48 +28,48 @@ PODS:
     - Protobuf (~> 3.1)
   - FirebaseInstanceID (2.0.10):
     - FirebaseCore (~> 4.0)
-  - FirebaseQueryExecutor (0.1.6):
-    - Firebase (= 4.9.0)
-    - Firebase/Firestore (= 4.9.0)
-    - RxSwift (~> 4.0)
-    - SwiftyJSON (~> 4.0)
   - GoogleToolboxForMac/Defines (2.1.4)
   - "GoogleToolboxForMac/NSData+zlib (2.1.4)":
     - GoogleToolboxForMac/Defines (= 2.1.4)
-  - gRPC (1.11.0):
-    - gRPC-RxLibrary (= 1.11.0)
-    - gRPC/Main (= 1.11.0)
-  - gRPC-Core (1.11.0):
-    - gRPC-Core/Implementation (= 1.11.0)
-    - gRPC-Core/Interface (= 1.11.0)
-  - gRPC-Core/Implementation (1.11.0):
+  - gRPC (1.12.0):
+    - gRPC-RxLibrary (= 1.12.0)
+    - gRPC/Main (= 1.12.0)
+  - gRPC-Core (1.12.0):
+    - gRPC-Core/Implementation (= 1.12.0)
+    - gRPC-Core/Interface (= 1.12.0)
+  - gRPC-Core/Implementation (1.12.0):
     - BoringSSL (~> 10.0)
-    - gRPC-Core/Interface (= 1.11.0)
+    - gRPC-Core/Interface (= 1.12.0)
     - nanopb (~> 0.3)
-  - gRPC-Core/Interface (1.11.0)
-  - gRPC-ProtoRPC (1.11.0):
-    - gRPC (= 1.11.0)
-    - gRPC-RxLibrary (= 1.11.0)
+  - gRPC-Core/Interface (1.12.0)
+  - gRPC-ProtoRPC (1.12.0):
+    - gRPC (= 1.12.0)
+    - gRPC-RxLibrary (= 1.12.0)
     - Protobuf (~> 3.0)
-  - gRPC-RxLibrary (1.11.0)
-  - gRPC/Main (1.11.0):
-    - gRPC-Core (= 1.11.0)
-    - gRPC-RxLibrary (= 1.11.0)
+  - gRPC-RxLibrary (1.12.0)
+  - gRPC/Main (1.12.0):
+    - gRPC-Core (= 1.12.0)
+    - gRPC-RxLibrary (= 1.12.0)
   - leveldb-library (1.20)
   - nanopb (0.3.8):
     - nanopb/decode (= 0.3.8)
     - nanopb/encode (= 0.3.8)
   - nanopb/decode (0.3.8)
   - nanopb/encode (0.3.8)
-  - Protobuf (3.5.0)
-  - RxSwift (4.0.0)
-  - SwiftyJSON (4.0.0)
+  - Protobuf (3.6.0)
+  - RxFirestoreExecutor (0.1.6):
+    - Firebase (= 4.9.0)
+    - Firebase/Firestore (= 4.9.0)
+    - RxSwift (~> 4.0)
+    - SwiftyJSON (~> 4.0)
+  - RxSwift (4.2.0)
+  - SwiftyJSON (4.1.0)
 
 DEPENDENCIES:
-  - FirebaseQueryExecutor (from `../`)
+  - RxFirestoreExecutor (from `../`)
 
 SPEC REPOS:
-  https://github.com/CocoaPods/Specs.git:
+  https://github.com/cocoapods/specs.git:
     - BoringSSL
     - Firebase
     - FirebaseAnalytics
@@ -88,28 +88,28 @@ SPEC REPOS:
     - SwiftyJSON
 
 EXTERNAL SOURCES:
-  FirebaseQueryExecutor:
+  RxFirestoreExecutor:
     :path: "../"
 
 SPEC CHECKSUMS:
-  BoringSSL: 60dd24df4af296bf41d78e5841dbb95d75f88c0d
+  BoringSSL: cf3f1793eb6e3c445c4d150456341f149c268a35
   Firebase: 632216af3ed7f31e3be34776947fdc7546cfb572
   FirebaseAnalytics: 388b630c15713f5dbf364071f5f3d6077fb52f4e
   FirebaseCore: 3bd047463058fa6b5d312c97502c52e45401cdfb
   FirebaseFirestore: a6db7a47c6a47d26069892d7db39f7792f2f7f9a
   FirebaseInstanceID: 8d20d890d65c917f9f7d9950b6e10a760ad34321
-  FirebaseQueryExecutor: 10bbbe3d0b408166455f96aa579bcd4ee44307da
   GoogleToolboxForMac: 91c824d21e85b31c2aae9bb011c5027c9b4e738f
-  gRPC: 70703dc9ba31c72341fc7f37745cc1c379edee96
-  gRPC-Core: 164639cd8ae18ca8b65477fafb2efbaecf4f181a
-  gRPC-ProtoRPC: bb5fddf3424aa4fad74d76736578a79fe40e244e
-  gRPC-RxLibrary: 26d53d1b1f306befd4ad4e15bd6de27839a82481
+  gRPC: 9362451032695e2dfb7bafcd3740e3a27939e4ff
+  gRPC-Core: 9696b220565b283e021cf2722d473a4a74b7622a
+  gRPC-ProtoRPC: a1bd56fb1991a8dae4581250d7259eddabb66779
+  gRPC-RxLibrary: 1ed5314e8b38cd6e55c9bfa048387136ae925ce9
   leveldb-library: 08cba283675b7ed2d99629a4bc5fd052cd2bb6a5
   nanopb: 5601e6bca2dbf1ed831b519092ec110f66982ca3
-  Protobuf: 8a9838fba8dae3389230e1b7f8c104aa32389c03
-  RxSwift: fd680d75283beb5e2559486f3c0ff852f0d35334
-  SwiftyJSON: 070dabdcb1beb81b247c65ffa3a79dbbfb3b48aa
+  Protobuf: 0fc0ad8bec688b2a3017a139953e01374fedbd5f
+  RxFirestoreExecutor: 250211a7c66a589f8d8fa106f47bdbd3e2e99935
+  RxSwift: 99e10317ddfcc7fbe01356aafd118fde4a0be104
+  SwiftyJSON: c29297daf073d2aa016295d5809cdd68045c39b3
 
-PODFILE CHECKSUM: 7410a29531b0f463bfae00c4c63ee62f2d420c01
+PODFILE CHECKSUM: cae425cbadd71fa4f71c49858c4fd82bf632370e
 
-COCOAPODS: 1.5.0
+COCOAPODS: 1.5.3

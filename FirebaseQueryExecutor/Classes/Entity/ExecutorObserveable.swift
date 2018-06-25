@@ -50,6 +50,7 @@ class ExecutorObserveable: ExecutorFirestoreEntity {
     }
     
     private func observeCollection() -> Observable<Any> {
+        objc_sync_enter(self)
         return Observable.create({ [unowned self] (observe) in
             
             do {
@@ -78,6 +79,7 @@ class ExecutorObserveable: ExecutorFirestoreEntity {
                 }
             })
             
+            objc_sync_exit(self)
             return Disposables.create {
                 listener.remove()
             }
@@ -85,7 +87,7 @@ class ExecutorObserveable: ExecutorFirestoreEntity {
     }
     
     private func observeSingleDoc(documentID: String) -> Observable<Any> {
-        
+        objc_sync_enter(self)
         return Observable.create({ [unowned self] (observe) in
 
             let collection = self.collectionString
@@ -117,6 +119,7 @@ class ExecutorObserveable: ExecutorFirestoreEntity {
                 
             })
             
+            objc_sync_exit(self)
             return Disposables.create {
                 listener.remove()
             }
@@ -124,7 +127,7 @@ class ExecutorObserveable: ExecutorFirestoreEntity {
     }
     
     private func observeDoc(argTrain: TraitList) -> Observable<Any> {
-        
+        objc_sync_enter(self)
         return Observable.create({ [unowned self] (observe) -> Disposable in
             
             let collection = self.collectionString
@@ -161,6 +164,7 @@ class ExecutorObserveable: ExecutorFirestoreEntity {
                 observe.onNext(objects as Any)
             })
             
+            objc_sync_exit(self)
             return Disposables.create {
                 listener.remove()
             }
@@ -181,6 +185,7 @@ class ExecutorObserveable: ExecutorFirestoreEntity {
     
     
     private func observeNestedCollection(documentID: String, nestedCollection:String) -> Observable<Any> {
+        objc_sync_enter(self)
         return Observable.create({ [unowned self] (observe) in
             
             let collection = self.collectionString
@@ -204,6 +209,7 @@ class ExecutorObserveable: ExecutorFirestoreEntity {
                 observe.onNext(objects as Any)
             })
             
+            objc_sync_exit(self)
             return Disposables.create {
                 listener.remove()
             }

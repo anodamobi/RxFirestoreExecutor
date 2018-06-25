@@ -19,7 +19,7 @@
  */
 
 import UIKit
-import FirebaseQueryExecutor
+import RxFirestoreExecutor
 import RxSwift
 
 @UIApplicationMain

@@ -57,7 +57,7 @@ class ExecutorSingle: ExecutorFirestoreEntity {
     
     
     private func loadCollection() -> Single<Any> {
-        
+        objc_sync_enter(self)
         return Single.create(subscribe: { [unowned self] (single) in
             
             let collection = self.collectionString
@@ -86,11 +86,14 @@ class ExecutorSingle: ExecutorFirestoreEntity {
                     single(.success(objects))
                 }
             })
+            
+            objc_sync_exit(self)
             return Disposables.create()
         })
     }
     
     private func load(queryFilter: String, param: String) -> Single<Any> {
+        objc_sync_enter(self)
         return Single.create(subscribe: { [unowned self] (single) in
             
             let collection = self.collectionString
@@ -120,11 +123,13 @@ class ExecutorSingle: ExecutorFirestoreEntity {
                         single(.success(objects))
                     }
                 })
+            objc_sync_exit(self)
             return Disposables.create()
         })
     }
     
     private func load(singleDoc: String) -> Single<Any> {
+        objc_sync_enter(self)
         return Single.create(subscribe: { [unowned self] (single) in
             
             let collection = self.collectionString
@@ -154,12 +159,13 @@ class ExecutorSingle: ExecutorFirestoreEntity {
                     return single(.success(object))
                 }
             })
+            objc_sync_exit(self)
             return Disposables.create()
         })
     }
     
     private func load(argTrain: [(String, String)]) -> Single<Any> {
-        
+        objc_sync_enter(self)
         return Single.create(subscribe: { [unowned self] (single) in
             let collection = self.collectionString
             
@@ -193,11 +199,13 @@ class ExecutorSingle: ExecutorFirestoreEntity {
                     single(.success(objects))
                 }
             })
+            objc_sync_exit(self)
             return Disposables.create()
         })
     }
     
     private func updateDocument(dataDict: [String: Any]?, docID: String?) -> Single<Any> {
+        objc_sync_enter(self)
         return Single.create(subscribe: { [unowned self] (single) in
             
             let collection = self.collectionString
@@ -216,6 +224,7 @@ class ExecutorSingle: ExecutorFirestoreEntity {
                 single(.success(true))
             })
             
+            objc_sync_exit(self)
             return Disposables.create()
         })
     }

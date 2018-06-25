@@ -19,7 +19,7 @@
  */
 
 import XCTest
-import FirebaseQueryExecutor
+import RxFirestoreExecutor
 
 class Tests: XCTestCase {
     

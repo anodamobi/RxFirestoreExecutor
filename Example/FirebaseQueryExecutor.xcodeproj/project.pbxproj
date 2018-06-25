@@ -31,6 +31,7 @@
 		0AC798103B09E27A40A53EF4 /* README.md */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = ../README.md; sourceTree = "<group>"; };
 		1D4B110601E70B1F0352AB9A /* Pods-FirebaseQueryExecutor_Example.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-FirebaseQueryExecutor_Example.release.xcconfig"; path = "Pods/Target Support Files/Pods-FirebaseQueryExecutor_Example/Pods-FirebaseQueryExecutor_Example.release.xcconfig"; sourceTree = "<group>"; };
 		562925BC33006E91289A2FA9 /* Pods-FirebaseQueryExecutor_Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-FirebaseQueryExecutor_Tests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-FirebaseQueryExecutor_Tests/Pods-FirebaseQueryExecutor_Tests.debug.xcconfig"; sourceTree = "<group>"; };
+		56E5B93A20E1446400C22906 /* RxFirestoreExecutor.podspec */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = RxFirestoreExecutor.podspec; path = ../RxFirestoreExecutor.podspec; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 		5DDA57298738D84EF3400C74 /* LICENSE */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = LICENSE; path = ../LICENSE; sourceTree = "<group>"; };
 		607FACD01AFB9204008FA782 /* FirebaseQueryExecutor_Example.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FirebaseQueryExecutor_Example.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		607FACD41AFB9204008FA782 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -43,7 +44,6 @@
 		607FACEA1AFB9204008FA782 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		607FACEB1AFB9204008FA782 /* Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tests.swift; sourceTree = "<group>"; };
 		6A18098BA0C9F08A16838D94 /* Pods-FirebaseQueryExecutor_Tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-FirebaseQueryExecutor_Tests.release.xcconfig"; path = "Pods/Target Support Files/Pods-FirebaseQueryExecutor_Tests/Pods-FirebaseQueryExecutor_Tests.release.xcconfig"; sourceTree = "<group>"; };
-		A5B3AD024DFFB1994F11D173 /* FirebaseQueryExecutor.podspec */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = FirebaseQueryExecutor.podspec; path = ../FirebaseQueryExecutor.podspec; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 		C48F62B37564A61B8686AEC5 /* Pods_FirebaseQueryExecutor_Example.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_FirebaseQueryExecutor_Example.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		DE980AD521BADADC275A13C3 /* Pods-FirebaseQueryExecutor_Example.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-FirebaseQueryExecutor_Example.debug.xcconfig"; path = "Pods/Target Support Files/Pods-FirebaseQueryExecutor_Example/Pods-FirebaseQueryExecutor_Example.debug.xcconfig"; sourceTree = "<group>"; };
 		DF1E7F4F6D4305C35A48097A /* Pods_FirebaseQueryExecutor_Tests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_FirebaseQueryExecutor_Tests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -132,7 +132,7 @@
 		607FACF51AFB993E008FA782 /* Podspec Metadata */ = {
 			isa = PBXGroup;
 			children = (
-				A5B3AD024DFFB1994F11D173 /* FirebaseQueryExecutor.podspec */,
+				56E5B93A20E1446400C22906 /* RxFirestoreExecutor.podspec */,
 				0AC798103B09E27A40A53EF4 /* README.md */,
 				5DDA57298738D84EF3400C74 /* LICENSE */,
 			);
