@@ -43,7 +43,7 @@ extension QueryService: QueryTargetProtocol {
     }
   }
   
-  // everthign else should return nil if not used.
+  // everything else should return nil if not used.
 }
 ```
 
