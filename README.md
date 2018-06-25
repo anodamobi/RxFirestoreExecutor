@@ -1,6 +1,7 @@
 ## Requirements
 
-
+xCode: 9.2
+Swift: 4.0
 
 ## Installation
 
