@@ -21,6 +21,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                      didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         executor.request(.test).subscribe(onSuccess: { (_) in
         }) { (error) in
+
+            if let err = error as? ExecutorError {
+                switch err {
+                case .emptyDataSet:
+                    break
+                default:
+                    break
+                }
+            }
             print(error)
         }.disposed(by: bag)
         return true

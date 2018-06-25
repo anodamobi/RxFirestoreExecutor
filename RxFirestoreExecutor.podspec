@@ -7,20 +7,20 @@
 #
 
 Pod::Spec.new do |s|
-    s.name             = 'FirebaseQueryExecutor'
+    s.name             = 'RxFirestoreExecutor'
     s.version          = '0.1.6'
-    s.summary          = 'A short description of FirebaseQueryExecutor.'
+    s.summary          = 'RxFirestoreExecutor is a simplified way to work Firebase/Firestore Queries.'
     
     s.description      = <<-DESC
-    TODO: Add long description of the pod here.
+    RxFirestoreExecutor uses "MOYA-like" structure to simplify query workflow. It's also handle response from Firestore via RxSwift.
+    It's replace a lot of boilerplate code for creating queries and handle them with Firebase/Firestore Library.
     DESC
     
+    s.swift_version = '4.2'
     s.homepage         = 'https://github.com/Pavel Mosunov/FirebaseQueryExecutor'
-    # s.screenshots     = 'www.example.com/screenshots_1', 'www.example.com/screenshots_2'
     s.license          = { :type => 'MIT', :file => 'LICENSE' }
     s.author           = { 'Pavel Mosunov' => 'pavel.mosunov@anoda.mobi' }
     s.source           = { :git => 'git@gitlab.anoda.mobi:open-source-public/firestore-query-executor.git', :tag => s.version.to_s }
-    # s.social_media_url = 'https://twitter.com/<TWITTER_USERNAME>'
     
     s.ios.deployment_target = '10.0'
     s.static_framework = true
