@@ -215,7 +215,7 @@ class ExecutorObserveable: ExecutorFirestoreEntity {
     
     private func synchronized(executionBlock: () -> (Observable<Any>)) -> Observable<Any> {
        return DispatchQueue.global().sync {
-           executionBlock()
+          return executionBlock()
         }
     }
 }

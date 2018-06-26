@@ -231,7 +231,7 @@ class ExecutorSingle: ExecutorFirestoreEntity {
     
     private func synchronized(executionBlock: () -> (Single<Any>))-> Single<Any> {
         return DispatchQueue.global().sync {
-            executionBlock()
+           return executionBlock()
         }
     }
 }
