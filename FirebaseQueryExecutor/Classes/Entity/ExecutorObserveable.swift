@@ -72,8 +72,8 @@ class ExecutorObserveable: ExecutorFirestoreEntity {
                         return
                     }
                     
-                    if let objects = snapshot?.documents.map({ (obj) -> JSON in
-                        return JSON(self?.composeObject(document: obj) ?? [:])
+                    if let objects = snapshot?.documents.map({ (obj) -> [String:Any] in
+                        return self?.composeObject(document: obj) ?? [:]
                     }) {
                         observe.onNext(objects)
                     }
