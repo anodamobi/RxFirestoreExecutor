@@ -50,7 +50,7 @@ class ExecutorObserveable: ExecutorFirestoreEntity {
     }
     
     private func observeCollection() -> Observable<Any> {
-        return Observable.create({ [unowned self] (observe) in
+        return Observable.create({ (observe) in
             
             do {
                 try self.savior.saveSingle(collection: self.collectionString ?? "")
