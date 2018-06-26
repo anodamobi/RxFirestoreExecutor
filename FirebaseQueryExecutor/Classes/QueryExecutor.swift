@@ -31,22 +31,27 @@ public class QueryExecutor<Target> where Target: QueryTargetProtocol {
         single.create(collectionRef: token.collection)
         single.condition = condition
         
-        return single.singleTrait(token.singleDocument,
-                                  token.params,
-                                  token.data)
-            .subscribeOn(ConcurrentDispatchQueueScheduler.init(qos: .utility))
-            .observeOn(ConcurrentDispatchQueueScheduler.init(qos: .utility))
+        return DispatchQueue.global().sync(execute: { () -> Single<Any> in
+            return single.singleTrait(token.singleDocument,
+                                      token.params,
+                                      token.data)
+                .subscribeOn(ConcurrentDispatchQueueScheduler.init(qos: .utility))
+                .observeOn(ConcurrentDispatchQueueScheduler.init(qos: .utility))
+        })
     }
     
     public func subscribe(_ token: Target, condition: QueryConditions = .and) -> Observable<Any> {
         observeable.create(collectionRef: token.collection)
         observeable.condition = condition
         
-        return observeable.observableSubscription(token.singleDocument,
-                                                  token.params,
-                                                  token.nestedCollection)
-            .subscribeOn(ConcurrentDispatchQueueScheduler.init(qos: .utility))
-            .observeOn(ConcurrentDispatchQueueScheduler.init(qos: .utility))
+        return DispatchQueue.global().sync(execute: { () -> Observable<Any> in
+            return observeable.observableSubscription(token.singleDocument,
+                                                      token.params,
+                                                      token.nestedCollection)
+                .subscribeOn(ConcurrentDispatchQueueScheduler.init(qos: .utility))
+                .observeOn(ConcurrentDispatchQueueScheduler.init(qos: .utility))
+        })
+        
     }
 }
 
