@@ -101,6 +101,7 @@ class ExecutorSingle: ExecutorFirestoreEntity {
                 try self.savior.saveQuery(filterParams: (queryFilter, param), collection: collection)
             } catch {
                 single(.error(error))
+                objc_sync_exit(self)
                 return Disposables.create()
             }
             
@@ -114,6 +115,7 @@ class ExecutorSingle: ExecutorFirestoreEntity {
                         try self?.savior.saveSnapshotDocuments(documents: snapshot?.documents)
                     } catch {
                         self?.onError(single, error: error)
+                        objc_sync_exit(self)
                         return
                     }
                     

@@ -95,6 +95,7 @@ class ExecutorObserveable: ExecutorFirestoreEntity {
                 try self.savior.saveSingleDoc(collection: collection, singleDoc: documentID)
             } catch {
                 observe.onError(error)
+                objc_sync_exit(self)
                 return Disposables.create()
             }
             
@@ -108,6 +109,7 @@ class ExecutorObserveable: ExecutorFirestoreEntity {
                     try self?.savior.saveSnapshotData(snapshot: snapshot)
                 } catch {
                     self?.onError(observe, error: error)
+                    objc_sync_exit(self)
                     return
                 }
                 
@@ -127,48 +129,48 @@ class ExecutorObserveable: ExecutorFirestoreEntity {
     }
     
     private func observeDoc(argTrain: TraitList) -> Observable<Any> {
-        objc_sync_enter(self)
-        return Observable.create({ [unowned self] (observe) -> Disposable in
-            
-            let collection = self.collectionString
-            do {
-                try self.savior.saveArgTrain(traitList: argTrain, collection: collection)
-            } catch {
-                observe.onError(error)
-                return Disposables.create()
-            }
-            
-            let colRef = self.db.collection(collection ?? "")
-            var query = colRef.whereField((argTrain?.first?.0) ?? "", isEqualTo: (argTrain?.first?.1) ?? "")
-            
-            self.create(query: &query, argTrain: argTrain)
-            self.orderQuery(&query)
-            
-            let listener = query.addSnapshotListener({ [weak self] (snapshot, error) in
-                self?.onError(observe, error: error)
+        return synchronized(object: self) { () -> (Observable<Any>) in
+            return Observable.create({ [unowned self] (observe) -> Disposable in
                 
+                let collection = self.collectionString
                 do {
-                    try self?.savior.saveSnapshotDocuments(documents: snapshot?.documents)
+                    try self.savior.saveArgTrain(traitList: argTrain, collection: collection)
                 } catch {
+                    observe.onError(error)
+                    return Disposables.create()
+                }
+                
+                let colRef = self.db.collection(collection ?? "")
+                var query = colRef.whereField((argTrain?.first?.0) ?? "", isEqualTo: (argTrain?.first?.1) ?? "")
+                
+                self.create(query: &query, argTrain: argTrain)
+                self.orderQuery(&query)
+                
+                let listener = query.addSnapshotListener({ [weak self] (snapshot, error) in
                     self?.onError(observe, error: error)
-                    return
-                }
+                    
+                    do {
+                        try self?.savior.saveSnapshotDocuments(documents: snapshot?.documents)
+                    } catch {
+                        self?.onError(observe, error: error)
+                        return
+                    }
+                    
+                    var objects: [[String: Any]]?
+                    if ExecutorSettings.shared.shouldObserveOnlyDiffs {
+                        objects = self?.singleDiffs(snapshot: snapshot)
+                    } else {
+                        objects = self?.allDocuments(snapshot: snapshot)
+                    }
+                    
+                    observe.onNext(objects as Any)
+                })
                 
-                var objects: [[String: Any]]?
-                if ExecutorSettings.shared.shouldObserveOnlyDiffs {
-                    objects = self?.singleDiffs(snapshot: snapshot)
-                } else {
-                    objects = self?.allDocuments(snapshot: snapshot)
+                return Disposables.create {
+                    listener.remove()
                 }
-                
-                observe.onNext(objects as Any)
             })
-            
-            objc_sync_exit(self)
-            return Disposables.create {
-                listener.remove()
-            }
-        })
+        }
     }
     
     private func singleDiffs(snapshot: QuerySnapshot?) -> [[String: Any]]? {
@@ -214,5 +216,11 @@ class ExecutorObserveable: ExecutorFirestoreEntity {
                 listener.remove()
             }
         })
+    }
+    
+    func synchronized(object: Any, executionBlock: () -> (Observable<Any>)) -> Observable<Any> {
+       return DispatchQueue.global().sync {
+           executionBlock()
+        }
     }
 }
