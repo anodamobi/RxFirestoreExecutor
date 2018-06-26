@@ -57,8 +57,7 @@ class ExecutorSingle: ExecutorFirestoreEntity {
     
     
     private func loadCollection() -> Single<Any> {
-        return synchronized(executionBlock: { () -> (PrimitiveSequence<SingleTrait, Any>) in
-            return Single.create(subscribe: { [unowned self] (single) in
+            return Single.create(subscribe: { (single) in
                 
                 let collection = self.collectionString
                 do {
@@ -89,12 +88,10 @@ class ExecutorSingle: ExecutorFirestoreEntity {
                 
                 return Disposables.create()
             })
-        })
     }
     
     private func load(queryFilter: String, param: String) -> Single<Any> {
-        return synchronized(executionBlock: { () -> (PrimitiveSequence<SingleTrait, Any>) in
-            return Single.create(subscribe: { [unowned self] (single) in
+            return Single.create(subscribe: { (single) in
                 
                 let collection = self.collectionString
                 do {
@@ -124,13 +121,11 @@ class ExecutorSingle: ExecutorFirestoreEntity {
                         }
                     })
                 return Disposables.create()
-            })
         })
     }
     
     private func load(singleDoc: String) -> Single<Any> {
-        return synchronized(executionBlock: { () -> (PrimitiveSequence<SingleTrait, Any>) in
-            return Single.create(subscribe: { [unowned self] (single) in
+            return Single.create(subscribe: { (single) in
                 
                 let collection = self.collectionString
                 
@@ -161,12 +156,10 @@ class ExecutorSingle: ExecutorFirestoreEntity {
                 })
                 return Disposables.create()
             })
-        })
     }
     
     private func load(argTrain: [(String, String)]) -> Single<Any> {
-        return synchronized(executionBlock: { () -> (PrimitiveSequence<SingleTrait, Any>) in
-            return Single.create(subscribe: { [unowned self] (single) in
+            return Single.create(subscribe: { (single) in
                 let collection = self.collectionString
                 
                 do {
@@ -201,12 +194,10 @@ class ExecutorSingle: ExecutorFirestoreEntity {
                 })
                 return Disposables.create()
             })
-        })
     }
     
     private func updateDocument(dataDict: [String: Any]?, docID: String?) -> Single<Any> {
-        return synchronized(executionBlock: { () -> (PrimitiveSequence<SingleTrait, Any>) in
-            return Single.create(subscribe: { [unowned self] (single) in
+            return Single.create(subscribe: { (single) in
                 
                 let collection = self.collectionString
                 do {
@@ -226,12 +217,5 @@ class ExecutorSingle: ExecutorFirestoreEntity {
                 
                 return Disposables.create()
             })
-        })
-    }
-    
-    private func synchronized(executionBlock: () -> (Single<Any>))-> Single<Any> {
-        return DispatchQueue.global().sync {
-            return executionBlock()
-        }
     }
 }

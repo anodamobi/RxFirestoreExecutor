@@ -22,36 +22,32 @@ import Foundation
 import RxSwift
 
 public class QueryExecutor<Target> where Target: QueryTargetProtocol {
-    private var single = ExecutorSingle()
-    private var observeable = ExecutorObserveable()
     
     public init() {}
     
     public func request(_ token: Target, condition: QueryConditions = .and) -> Single<Any> {
+        
+        var single = ExecutorSingle()
         single.create(collectionRef: token.collection)
         single.condition = condition
-        
-        return DispatchQueue.global().sync(execute: { () -> Single<Any> in
             return single.singleTrait(token.singleDocument,
                                       token.params,
                                       token.data)
                 .subscribeOn(ConcurrentDispatchQueueScheduler.init(qos: .utility))
                 .observeOn(ConcurrentDispatchQueueScheduler.init(qos: .utility))
-        })
     }
     
     public func subscribe(_ token: Target, condition: QueryConditions = .and) -> Observable<Any> {
+        
+        var observeable = ExecutorObserveable()
         observeable.create(collectionRef: token.collection)
         observeable.condition = condition
         
-        return DispatchQueue.global().sync(execute: { () -> Observable<Any> in
             return observeable.observableSubscription(token.singleDocument,
                                                       token.params,
                                                       token.nestedCollection)
                 .subscribeOn(ConcurrentDispatchQueueScheduler.init(qos: .utility))
                 .observeOn(ConcurrentDispatchQueueScheduler.init(qos: .utility))
-        })
-        
     }
 }
 
