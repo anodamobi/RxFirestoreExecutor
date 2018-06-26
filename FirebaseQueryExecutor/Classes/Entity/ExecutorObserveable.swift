@@ -50,86 +50,82 @@ class ExecutorObserveable: ExecutorFirestoreEntity {
     }
     
     private func observeCollection() -> Observable<Any> {
-        objc_sync_enter(self)
-        return Observable.create({ [unowned self] (observe) in
-            
-            do {
-                try self.savior.saveSingle(collection: self.collectionString ?? "")
-            } catch {
-                observe.onError(error)
-                return Disposables.create()
-            }
-            
-            
-            let colRef = self.db.collection(self.collectionString!)
-            let listener = colRef.addSnapshotListener({ [weak self] (snapshot, error) in
-                self?.onError(observe, error: error)
+        return synchronized { () -> (Observable<Any>) in
+            return Observable.create({ [unowned self] (observe) in
                 
                 do {
-                    try self?.savior.saveSnapshotDocuments(documents: snapshot?.documents)
+                    try self.savior.saveSingle(collection: self.collectionString ?? "")
                 } catch {
-                    self?.onError(observe, error: error)
-                    return
+                    observe.onError(error)
+                    return Disposables.create()
                 }
                 
-                if let objects = snapshot?.documents.map({ (obj) -> JSON in
-                    return JSON(self?.composeObject(document: obj) ?? [:])
-                }) {
-                    observe.onNext(objects)
+                
+                let colRef = self.db.collection(self.collectionString!)
+                let listener = colRef.addSnapshotListener({ [weak self] (snapshot, error) in
+                    self?.onError(observe, error: error)
+                    
+                    do {
+                        try self?.savior.saveSnapshotDocuments(documents: snapshot?.documents)
+                    } catch {
+                        self?.onError(observe, error: error)
+                        return
+                    }
+                    
+                    if let objects = snapshot?.documents.map({ (obj) -> JSON in
+                        return JSON(self?.composeObject(document: obj) ?? [:])
+                    }) {
+                        observe.onNext(objects)
+                    }
+                })
+                return Disposables.create {
+                    listener.remove()
                 }
             })
-            
-            objc_sync_exit(self)
-            return Disposables.create {
-                listener.remove()
-            }
-        })
+        }
     }
     
     private func observeSingleDoc(documentID: String) -> Observable<Any> {
-        objc_sync_enter(self)
-        return Observable.create({ [unowned self] (observe) in
-
-            let collection = self.collectionString
-            do {
-                try self.savior.saveSingleDoc(collection: collection, singleDoc: documentID)
-            } catch {
-                observe.onError(error)
-                objc_sync_exit(self)
-                return Disposables.create()
-            }
-            
-            
-            let colRef = self.db.collection(collection ?? "").document(documentID)
-            
-            let listener = colRef.addSnapshotListener({ [weak self] (snapshot, error) in
-                self?.onError(observe, error: error)
+        return synchronized(executionBlock: { () -> (Observable<Any>) in
+            return Observable.create({ [unowned self] (observe) in
                 
+                let collection = self.collectionString
                 do {
-                    try self?.savior.saveSnapshotData(snapshot: snapshot)
+                    try self.savior.saveSingleDoc(collection: collection, singleDoc: documentID)
                 } catch {
+                    observe.onError(error)
+                    return Disposables.create()
+                }
+                
+                
+                let colRef = self.db.collection(collection ?? "").document(documentID)
+                
+                let listener = colRef.addSnapshotListener({ [weak self] (snapshot, error) in
                     self?.onError(observe, error: error)
-                    objc_sync_exit(self)
-                    return
+                    
+                    do {
+                        try self?.savior.saveSnapshotData(snapshot: snapshot)
+                    } catch {
+                        self?.onError(observe, error: error)
+                        return
+                    }
+                    
+                    if var object: [String:Any] = snapshot?.data() {
+                        object["uid"] = snapshot?.documentID
+                        object["id"] =  snapshot?.documentID
+                        observe.onNext(object)
+                    }
+                    
+                })
+                return Disposables.create {
+                    listener.remove()
                 }
-                
-                if var object: [String:Any] = snapshot?.data() {
-                    object["uid"] = snapshot?.documentID
-                    object["id"] =  snapshot?.documentID
-                    observe.onNext(object)
-                }
-                
             })
-            
-            objc_sync_exit(self)
-            return Disposables.create {
-                listener.remove()
-            }
         })
     }
     
     private func observeDoc(argTrain: TraitList) -> Observable<Any> {
-        return synchronized(object: self) { () -> (Observable<Any>) in
+        return synchronized(executionBlock: { () -> (Observable<Any>) in
             return Observable.create({ [unowned self] (observe) -> Disposable in
                 
                 let collection = self.collectionString
@@ -187,38 +183,37 @@ class ExecutorObserveable: ExecutorFirestoreEntity {
     
     
     private func observeNestedCollection(documentID: String, nestedCollection:String) -> Observable<Any> {
-        objc_sync_enter(self)
-        return Observable.create({ [unowned self] (observe) in
-            
-            let collection = self.collectionString
-            do {
-                try self.savior.saveNested(collection: collection, parentDoc: documentID, nestedCollection: nestedCollection)
-            } catch {
-                observe.onError(error)
-                return Disposables.create()
-            }
-            
-            let colRef = self.db.collection(collection ?? "").document(documentID).collection(nestedCollection)
-            
-            let listener = colRef.addSnapshotListener({ [weak self] (snapshot, error) in
-                self?.onError(observe, error: error)
+        return synchronized(executionBlock: { () -> (Observable<Any>) in
+            return Observable.create({ [unowned self] (observe) in
+                let collection = self.collectionString
+                do {
+                    try self.savior.saveNested(collection: collection, parentDoc: documentID, nestedCollection: nestedCollection)
+                } catch {
+                    observe.onError(error)
+                    return Disposables.create()
+                }
                 
-                let objects = snapshot?.documentChanges.map({ (diff) -> [String: Any] in
+                let colRef = self.db.collection(collection ?? "").document(documentID).collection(nestedCollection)
+                
+                let listener = colRef.addSnapshotListener({ [weak self] (snapshot, error) in
+                    self?.onError(observe, error: error)
                     
-                    return self?.composeObject(document: diff.document) ?? [:]
+                    let objects = snapshot?.documentChanges.map({ (diff) -> [String: Any] in
+                        
+                        return self?.composeObject(document: diff.document) ?? [:]
+                    })
+                    
+                    observe.onNext(objects as Any)
                 })
                 
-                observe.onNext(objects as Any)
+                return Disposables.create {
+                    listener.remove()
+                }
             })
-            
-            objc_sync_exit(self)
-            return Disposables.create {
-                listener.remove()
-            }
         })
     }
     
-    func synchronized(object: Any, executionBlock: () -> (Observable<Any>)) -> Observable<Any> {
+    private func synchronized(executionBlock: () -> (Observable<Any>)) -> Observable<Any> {
        return DispatchQueue.global().sync {
            executionBlock()
         }
