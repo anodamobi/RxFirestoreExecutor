@@ -166,7 +166,7 @@ class ExecutorObserveable: ExecutorFirestoreEntity {
                     listener.remove()
                 }
             })
-        }
+        })
     }
     
     private func singleDiffs(snapshot: QuerySnapshot?) -> [[String: Any]]? {

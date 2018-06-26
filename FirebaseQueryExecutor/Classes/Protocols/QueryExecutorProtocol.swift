@@ -29,6 +29,6 @@ public protocol QueryExecutorProtocol {
     typealias TraitList = [Trait]?
     typealias CollectionRef = String
     typealias ConditionPair = (firstConstraint:Trait, secondConstraint:Trait)?
-    typealias Trait = (fieldName: String, expectedValue: Any)
+    typealias Trait = (fieldName: String, expectedValue: String)
     typealias OrderTrait = (orderString:String, isOrderSpecified: Bool, isAscending:Bool)?
 }
