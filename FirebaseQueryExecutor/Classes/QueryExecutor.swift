@@ -27,7 +27,7 @@ public class QueryExecutor<Target> where Target: QueryTargetProtocol {
     
     public func request(_ token: Target, condition: QueryConditions = .and) -> Single<Any> {
         
-        var single = ExecutorSingle()
+        let single = ExecutorSingle()
         single.create(collectionRef: token.collection)
         single.condition = condition
             return single.singleTrait(token.singleDocument,
@@ -39,7 +39,7 @@ public class QueryExecutor<Target> where Target: QueryTargetProtocol {
     
     public func subscribe(_ token: Target, condition: QueryConditions = .and) -> Observable<Any> {
         
-        var observeable = ExecutorObserveable()
+        let observeable = ExecutorObserveable()
         observeable.create(collectionRef: token.collection)
         observeable.condition = condition
         

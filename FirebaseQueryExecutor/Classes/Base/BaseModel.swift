@@ -18,29 +18,51 @@
  THE SOFTWARE.
  */
 
-import XCTest
-import Quick
-import Nimble
-import RxFirestoreExecutor
+import Foundation
+import RxSwift
 
-class Tests: XCTestCase {
+open class BaseModel:  QueryExecutorProtocol {
     
-    var baseModel: BaseModel?
+    public init() {}
     
-    override func setUp() {
-        super.setUp()
-       baseModel = BaseModel()
+    var objectID = ""
+    
+    open var collection: CollectionRef = ""
+    
+    //Success or error
+    open func push(_ object: Any) -> [String: Any] {//Single<Any> {
+        let single = ExecutorSingle()
+        return map(item: object as AnyObject)//single.pushObject(col: collection, docID: objectID, data: map(item: object as AnyObject))
     }
     
-    override func tearDown() {
-        baseModel = nil
-        super.tearDown()
-    }
-    
-    func testPush() {
+    open func pull() {
         
     }
     
+    open func observe() {
+        
+    }
+   
+}
+
+extension BaseModel {
     
+    public func map(item: AnyObject) -> [String:Any] {
+        var result: [String:Any] = [:]
+        let mirrorObject = Mirror(reflecting: item)
+        for (name, value) in mirrorObject.children {
+            guard let name = name else { continue }
+            print(name)
+            result[name] = value
+        }
+        return result
+    }
     
+    public func mapTo<T>(item: T.Type) -> Single<T> {
+        
+        return Single.create(subscribe: { (single) in
+            
+            return Disposables.create()
+        })
+    }
 }

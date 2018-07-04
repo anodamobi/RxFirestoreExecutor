@@ -218,4 +218,20 @@ class ExecutorSingle: ExecutorFirestoreEntity {
                 return Disposables.create()
             })
     }
+    
+    
+    //TODO: Pavel: Prichesat' proverit'
+    func pushObject(col: String, docID: String, data: [String: Any]) -> Single<Any> {
+        return Single.create(subscribe: { (single) in
+            
+            let docRef = self.db.collection(col).document(docID)
+            docRef.setData(data, completion: { [weak self] (error) in
+                self?.onError(single, error: error)
+                
+                single(.success(true))
+            })
+            
+            return Disposables.create()
+        })
+    }
 }

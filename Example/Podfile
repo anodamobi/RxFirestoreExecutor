@@ -6,7 +6,9 @@ target 'FirebaseQueryExecutor_Example' do
 
   target 'FirebaseQueryExecutor_Tests' do
     inherit! :search_paths
-
+    pod 'Quick'
+    pod 'Nimble'
+    pod 'RxFirestoreExecutor', :path => '../'
 
   end
 end
