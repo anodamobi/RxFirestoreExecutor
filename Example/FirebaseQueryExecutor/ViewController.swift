@@ -19,18 +19,65 @@
  */
 
 import UIKit
+import RxFirestoreExecutor
+import RxSwift
 
 class ViewController: UIViewController {
 
+    let executor = QueryExecutor<Target>()
+    let bag = DisposeBag()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view, typically from a nib.
-    }
-
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
+        
+        executor.request(.test).subscribe(onSuccess: { (_) in
+        }) { (error) in
+            
+            if let err = error as? ExecutorError {
+                switch err {
+                case .emptyDataSet:
+                    break
+                default:
+                    break
+                }
+            }
+            print(error)
+            }.disposed(by: bag)
+        
     }
 
 }
 
+enum Target {
+    case test
+}
+
+extension Target: QueryTargetProtocol {
+    var collection: CollectionRef {
+        return "collection"
+    }
+    
+    var singleDocument: SingleDocument {
+        return nil
+    }
+    
+    var params: TraitList {
+        return nil
+    }
+    
+    var data: UpdateableData {
+        return (nil, nil)
+    }
+    
+    var nestedCollection: NestedCollection {
+        return nil
+    }
+    
+    var orPair: ConditionPair {
+        return nil
+    }
+    
+    var order: OrderTrait {
+        return nil
+    }
+}

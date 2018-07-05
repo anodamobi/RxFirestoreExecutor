@@ -37,7 +37,7 @@ public struct QueryConditions: OptionSet {
 
 class ExecutorFirestoreEntity: QueryExecutorProtocol {
     
-    var db: Firestore
+    @objc var db: Firestore
     var collectionString: String?
     var condition: QueryConditions = .and
     var order: OrderTrait

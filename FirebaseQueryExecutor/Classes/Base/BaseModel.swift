@@ -30,9 +30,10 @@ open class BaseModel:  QueryExecutorProtocol {
     open var collection: CollectionRef = ""
     
     //Success or error
-    open func push(_ object: Any) -> [String: Any] {//Single<Any> {
+    open func push(_ object: Any) -> Single<Any> {
         let single = ExecutorSingle()
-        return map(item: object as AnyObject)//single.pushObject(col: collection, docID: objectID, data: map(item: object as AnyObject))
+        
+        return single.pushObject(col: collection, docID: objectID, data: map(item: object as AnyObject))
     }
     
     open func pull() {

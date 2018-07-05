@@ -20,10 +20,8 @@ Pod::Spec.new do |s|
     
     s.source_files = 'FirebaseQueryExecutor/Classes/*', 'FirebaseQueryExecutor/Classes/**/*'
     
-    # s.public_header_files = 'Pod/Classes/**/*.h'
-    # s.frameworks = 'UIKit', 'MapKit'
-    s.dependency 'Firebase/Firestore', '4.9.0'
-    s.dependency 'Firebase', '4.9.0'
-    s.dependency 'RxSwift', '~> 4.0'
+    s.dependency 'Firebase/Firestore', '~> 4.9.0'
+    s.dependency 'Firebase', '~> 4.9.0'
+    s.dependency 'RxSwift', '4.0'
     s.dependency 'SwiftyJSON', '~> 4.0'
 end

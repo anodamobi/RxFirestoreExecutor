@@ -27,7 +27,7 @@ import SwiftyJSON
 
 class ExecutorSingle: ExecutorFirestoreEntity {
     
-    let savior: Savior = Savior()
+    let validator: Validator = Validator()
     
     override init() {
         super.init()
@@ -61,7 +61,7 @@ class ExecutorSingle: ExecutorFirestoreEntity {
                 
                 let collection = self.collectionString
                 do {
-                    try self.savior.saveSingle(collection: collection)
+                    try self.validator.saveSingle(collection: collection)
                 } catch {
                     single(.error(error))
                     return Disposables.create()
@@ -73,7 +73,7 @@ class ExecutorSingle: ExecutorFirestoreEntity {
                     self?.onError(single, error: error)
                     
                     do {
-                        try self?.savior.saveSnapshotDocuments(documents: snapshot?.documents)
+                        try self?.validator.saveSnapshotDocuments(documents: snapshot?.documents)
                     } catch {
                         self?.onError(single, error: error)
                         return
@@ -95,7 +95,7 @@ class ExecutorSingle: ExecutorFirestoreEntity {
                 
                 let collection = self.collectionString
                 do {
-                    try self.savior.saveQuery(filterParams: (queryFilter, param), collection: collection)
+                    try self.validator.saveQuery(filterParams: (queryFilter, param), collection: collection)
                 } catch {
                     single(.error(error))
                     return Disposables.create()
@@ -108,7 +108,7 @@ class ExecutorSingle: ExecutorFirestoreEntity {
                         self?.onError(single, error: error)
                         
                         do {
-                            try self?.savior.saveSnapshotDocuments(documents: snapshot?.documents)
+                            try self?.validator.saveSnapshotDocuments(documents: snapshot?.documents)
                         } catch {
                             self?.onError(single, error: error)
                             return
@@ -130,7 +130,7 @@ class ExecutorSingle: ExecutorFirestoreEntity {
                 let collection = self.collectionString
                 
                 do {
-                    try self.savior.saveSingleDoc(collection: collection, singleDoc: singleDoc)
+                    try self.validator.saveSingleDoc(collection: collection, singleDoc: singleDoc)
                 } catch {
                     single(.error(error))
                     return Disposables.create()
@@ -141,7 +141,7 @@ class ExecutorSingle: ExecutorFirestoreEntity {
                     self?.onError(single, error: error)
                     
                     do {
-                        try self?.savior.saveSnapshotData(snapshot: snapshot)
+                        try self?.validator.saveSnapshotData(snapshot: snapshot)
                     } catch {
                         self?.onError(single, error: error)
                         return
@@ -163,7 +163,7 @@ class ExecutorSingle: ExecutorFirestoreEntity {
                 let collection = self.collectionString
                 
                 do {
-                    try self.savior.saveArgTrain(traitList: argTrain, collection: collection)
+                    try self.validator.saveArgTrain(traitList: argTrain, collection: collection)
                 } catch {
                     single(.error(error))
                     return Disposables.create()
@@ -180,7 +180,7 @@ class ExecutorSingle: ExecutorFirestoreEntity {
                     self?.onError(single, error: error)
                     
                     do {
-                        try self?.savior.saveSnapshotDocuments(documents: snapshot?.documents)
+                        try self?.validator.saveSnapshotDocuments(documents: snapshot?.documents)
                     } catch {
                         self?.onError(single, error: error)
                         return
@@ -201,7 +201,7 @@ class ExecutorSingle: ExecutorFirestoreEntity {
                 
                 let collection = self.collectionString
                 do {
-                    try self.savior.saveUploadData(data: dataDict, docRef: docID, collection: collection)
+                    try self.validator.saveUploadData(data: dataDict, docRef: docID, collection: collection)
                 } catch {
                     single(.error(error))
                     return Disposables.create()

@@ -19,31 +19,20 @@
  */
 
 import UIKit
-import RxFirestoreExecutor
-import RxSwift
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
-    let executor = QueryExecutor<Target>()
-    let bag = DisposeBag()
+    
 
     func application(_ application: UIApplication,
                      didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
-        executor.request(.test).subscribe(onSuccess: { (_) in
-        }) { (error) in
-
-            if let err = error as? ExecutorError {
-                switch err {
-                case .emptyDataSet:
-                    break
-                default:
-                    break
-                }
-            }
-            print(error)
-        }.disposed(by: bag)
+        
+        window = UIWindow()
+        window?.makeKeyAndVisible()
+        window?.rootViewController = UINavigationController(rootViewController: ViewController())
+        
         return true
     }
 
@@ -51,38 +40,4 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 }
 
-enum Target {
-    case test
-}
 
-extension Target: QueryTargetProtocol {
-    var collection: CollectionRef {
-        return "collection"
-    }
-    
-    var singleDocument: SingleDocument {
-        return nil
-    }
-    
-    var params: TraitList {
-        return nil
-    }
-    
-    var data: UpdateableData {
-        return (nil, nil)
-    }
-    
-    var nestedCollection: NestedCollection {
-        return nil
-    }
-    
-    var orPair: ConditionPair {
-        return nil
-    }
-    
-    var order: OrderTrait {
-        return nil
-    }
-    
-    
-}

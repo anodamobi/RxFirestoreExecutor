@@ -24,23 +24,23 @@ import Nimble
 import RxFirestoreExecutor
 
 class Tests: XCTestCase {
-    
+
     var baseModel: BaseModel?
-    
+
     override func setUp() {
         super.setUp()
        baseModel = BaseModel()
     }
-    
+
     override func tearDown() {
         baseModel = nil
         super.tearDown()
     }
-    
+
     func testPush() {
-        
+
     }
-    
-    
-    
+
+
+
 }

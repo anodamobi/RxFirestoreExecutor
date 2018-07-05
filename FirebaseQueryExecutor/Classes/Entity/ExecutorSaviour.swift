@@ -23,7 +23,7 @@ import RxSwift
 import FirebaseFirestore
 
 // Inspired by Rise Against - Saviour
-typealias Savior = ExecutorSaviour
+typealias Validator = ExecutorSaviour
 
 class ExecutorSaviour: ExecutorFirestoreEntity {
     

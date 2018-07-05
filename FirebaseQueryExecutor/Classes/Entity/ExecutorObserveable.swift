@@ -25,7 +25,7 @@ import FirebaseFirestore
 
 class ExecutorObserveable: ExecutorFirestoreEntity {
     
-    let savior: Savior = Savior()
+    let validator: Validator = Validator()
     
     override init() {
         super.init()
@@ -53,7 +53,7 @@ class ExecutorObserveable: ExecutorFirestoreEntity {
         return Observable.create({ (observe) in
             
             do {
-                try self.savior.saveSingle(collection: self.collectionString ?? "")
+                try self.validator.saveSingle(collection: self.collectionString ?? "")
             } catch {
                 observe.onError(error)
                 return Disposables.create()
@@ -65,7 +65,7 @@ class ExecutorObserveable: ExecutorFirestoreEntity {
                 self?.onError(observe, error: error)
                 
                 do {
-                    try self?.savior.saveSnapshotDocuments(documents: snapshot?.documents)
+                    try self?.validator.saveSnapshotDocuments(documents: snapshot?.documents)
                 } catch {
                     self?.onError(observe, error: error)
                     return
@@ -88,7 +88,7 @@ class ExecutorObserveable: ExecutorFirestoreEntity {
             
             let collection = self.collectionString
             do {
-                try self.savior.saveSingleDoc(collection: collection, singleDoc: documentID)
+                try self.validator.saveSingleDoc(collection: collection, singleDoc: documentID)
             } catch {
                 observe.onError(error)
                 return Disposables.create()
@@ -101,7 +101,7 @@ class ExecutorObserveable: ExecutorFirestoreEntity {
                 self?.onError(observe, error: error)
                 
                 do {
-                    try self?.savior.saveSnapshotData(snapshot: snapshot)
+                    try self?.validator.saveSnapshotData(snapshot: snapshot)
                 } catch {
                     self?.onError(observe, error: error)
                     return
@@ -125,7 +125,7 @@ class ExecutorObserveable: ExecutorFirestoreEntity {
             
             let collection = self.collectionString
             do {
-                try self.savior.saveArgTrain(traitList: argTrain, collection: collection)
+                try self.validator.saveArgTrain(traitList: argTrain, collection: collection)
             } catch {
                 observe.onError(error)
                 return Disposables.create()
@@ -141,7 +141,7 @@ class ExecutorObserveable: ExecutorFirestoreEntity {
                 self?.onError(observe, error: error)
                 
                 do {
-                    try self?.savior.saveSnapshotDocuments(documents: snapshot?.documents)
+                    try self?.validator.saveSnapshotDocuments(documents: snapshot?.documents)
                 } catch {
                     self?.onError(observe, error: error)
                     return
@@ -180,7 +180,7 @@ class ExecutorObserveable: ExecutorFirestoreEntity {
         return Observable.create({ (observe) in
             let collection = self.collectionString
             do {
-                try self.savior.saveNested(collection: collection, parentDoc: documentID, nestedCollection: nestedCollection)
+                try self.validator.saveNested(collection: collection, parentDoc: documentID, nestedCollection: nestedCollection)
             } catch {
                 observe.onError(error)
                 return Disposables.create()
