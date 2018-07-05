@@ -31,9 +31,17 @@ open class BaseModel:  QueryExecutorProtocol {
     
     //Success or error
     open func push(_ object: Any) -> Single<Any> {
+        
+        
         let single = ExecutorSingle()
         
-        return single.pushObject(col: collection, docID: objectID, data: map(item: object as AnyObject))
+        //TODO: check if we have a collection, if no - create one.
+        
+        if objectID.isEmpty {
+            return single.createObject(col: collection, data: map(item: object as AnyObject))
+        } else {
+            return single.pushObject(col: collection, docID: objectID, data: map(item: object as AnyObject))
+        }
     }
     
     open func pull() {

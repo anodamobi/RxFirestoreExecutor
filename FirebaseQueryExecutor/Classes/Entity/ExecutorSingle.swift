@@ -234,4 +234,21 @@ class ExecutorSingle: ExecutorFirestoreEntity {
             return Disposables.create()
         })
     }
+    
+    func createObject(col: String, data: [String: Any]) -> Single<Any> {
+         return Single.create(subscribe: { (single) in
+            
+            self.db.collection(col).addDocument(data: data, completion: { (error) in
+                if error == nil {
+                    single(.success(true))
+                } else {
+                    if let err = error {
+                        single(.error(err))
+                    }
+                }
+            })
+            
+            return Disposables.create()
+        })
+    }
 }
