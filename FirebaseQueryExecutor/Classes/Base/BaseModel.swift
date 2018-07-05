@@ -25,33 +25,60 @@ open class BaseModel:  QueryExecutorProtocol {
     
     public init() {}
     
+    required public init(dict: [String: Any]) {
+        
+    }
+    
     var objectID = ""
     
     open var collection: CollectionRef = ""
     
     //Success or error
     open func push(_ object: Any) -> Single<Any> {
-        
+        let single = ExecutorSingle()
+        return single.pushObject(col: collection, docID: objectID, data: map(item: object as AnyObject))
+    }
+    
+    open func pull() -> Single<Any> {
         
         let single = ExecutorSingle()
+        return single.load(singleDoc: objectID)
+    }
+    
+    open func observe<ModelType: BaseModel>() -> Observable<ModelType> {
+        let observer = ExecutorObserveable()
         
-        //TODO: check if we have a collection, if no - create one.
-        
-        if objectID.isEmpty {
-            return single.createObject(col: collection, data: map(item: object as AnyObject))
-        } else {
-            return single.pushObject(col: collection, docID: objectID, data: map(item: object as AnyObject))
+        return observer.observeSingleDoc(documentID: objectID)
+           // .map({ return ($0 as? [String: Any]) ?? [:] })
+            .flatMap({ (model) -> Observable<ModelType> in
+            //Smells bad :o
+            var emptyObservable = Observable<ModelType>.create({ (observe) in
+                observe.onError(ModelError.failedToConvertToDict)
+                return Disposables.create()
+            })
+
+            if let dict = model as? [String: Any] {
+                emptyObservable = dict.mapTo(item: ModelType.self)
+            }
+            return emptyObservable
+               // return Observable.just(model.mapTo(item: ModelType.self))
+        })
+    }
+   
+}
+
+enum ModelError: Error {
+    case failedToConvertToDict
+}
+
+extension ModelError: LocalizedError {
+    public var localizedDescription: String {
+        switch self {
+        case .failedToConvertToDict:
+            return "Cannot convert received data to Dict :'("
         }
     }
     
-    open func pull() {
-        
-    }
-    
-    open func observe() {
-        
-    }
-   
 }
 
 extension BaseModel {
@@ -66,12 +93,17 @@ extension BaseModel {
         }
         return result
     }
+}
+
+extension Dictionary where Key == String, Value: Any {
     
-    public func mapTo<T>(item: T.Type) -> Single<T> {
-        
-        return Single.create(subscribe: { (single) in
-            
-            return Disposables.create()
-        })
+    public func mapTo<T: BaseModel>(item: T.Type) -> Single<T> {
+        return Single.just(T.init(dict: self))
+    }
+    
+    public func mapTo<B: BaseModel>(item: B.Type) -> Observable<B> {
+
+            let object = B.init(dict: self)
+            return Observable.just(object)
     }
 }

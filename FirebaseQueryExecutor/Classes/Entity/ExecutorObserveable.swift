@@ -49,7 +49,7 @@ class ExecutorObserveable: ExecutorFirestoreEntity {
         
     }
     
-    private func observeCollection() -> Observable<Any> {
+    func observeCollection() -> Observable<Any> {
         return Observable.create({ (observe) in
             
             do {
@@ -83,7 +83,7 @@ class ExecutorObserveable: ExecutorFirestoreEntity {
         })
     }
     
-    private func observeSingleDoc(documentID: String) -> Observable<Any> {
+    func observeSingleDoc(documentID: String) -> Observable<Any> {
         return Observable.create({ (observe) in
             
             let collection = self.collectionString
@@ -120,7 +120,7 @@ class ExecutorObserveable: ExecutorFirestoreEntity {
         })
     }
     
-    private func observeDoc(argTrain: TraitList) -> Observable<Any> {
+    func observeDoc(argTrain: TraitList) -> Observable<Any> {
         return Observable.create({ (observe) -> Disposable in
             
             let collection = self.collectionString

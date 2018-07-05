@@ -124,7 +124,7 @@ class ExecutorSingle: ExecutorFirestoreEntity {
         })
     }
     
-    private func load(singleDoc: String) -> Single<Any> {
+    func load(singleDoc: String) -> Single<Any> {
             return Single.create(subscribe: { (single) in
                 
                 let collection = self.collectionString
@@ -222,31 +222,32 @@ class ExecutorSingle: ExecutorFirestoreEntity {
     
     //TODO: Pavel: Prichesat' proverit'
     func pushObject(col: String, docID: String, data: [String: Any]) -> Single<Any> {
+        
         return Single.create(subscribe: { (single) in
             
-            let docRef = self.db.collection(col).document(docID)
-            docRef.setData(data, completion: { [weak self] (error) in
-                self?.onError(single, error: error)
+            if !docID.isEmpty {
                 
-                single(.success(true))
-            })
-            
-            return Disposables.create()
-        })
-    }
-    
-    func createObject(col: String, data: [String: Any]) -> Single<Any> {
-         return Single.create(subscribe: { (single) in
-            
-            self.db.collection(col).addDocument(data: data, completion: { (error) in
-                if error == nil {
-                    single(.success(true))
-                } else {
-                    if let err = error {
-                        single(.error(err))
-                    }
+                let docRef = self.db.collection(col).document(docID)
+                docRef.setData(data, completion: { [weak self] (error) in
+                    self?.onError(single, error: error)
+                    
+                    single(.success(docID))
+                })
+            } else {
+                
+               let id = self.db.collection(col).addDocument(data: data, completion: { (error) in
+//                    if error == nil {
+//                        single(.success(true))
+//                    } else {
+                        if let err = error {
+                            single(.error(err))
+                        }
+//                    }
+                }).documentID
+                if !id.isEmpty {
+                    single(.success(id))
                 }
-            })
+            }
             
             return Disposables.create()
         })
