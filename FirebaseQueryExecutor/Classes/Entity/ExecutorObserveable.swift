@@ -210,16 +210,7 @@ class ExecutorObserveable: ExecutorFirestoreEntity {
     func observeSingle(documentID: String, collection: String) -> Observable<[String: Any]> {
         return Observable.create({ (observe) in
             
-            let collection = self.collectionString
-            do {
-                try self.validator.saveSingleDoc(collection: collection, singleDoc: documentID)
-            } catch {
-                observe.onError(error)
-                return Disposables.create()
-            }
-            
-            
-            let colRef = self.db.collection(collection ?? "").document(documentID)
+            let colRef = self.db.collection(collection).document(documentID)
             
             let listener = colRef.addSnapshotListener({ [weak self] (snapshot, error) in
                 
@@ -231,7 +222,7 @@ class ExecutorObserveable: ExecutorFirestoreEntity {
                     try self?.validator.saveSnapshotData(snapshot: snapshot)
                 } catch {
                     observe.onError(error)
-                    return
+                    return Disposables.create()
                 }
                 
                 if var object: [String:Any] = snapshot?.data() {

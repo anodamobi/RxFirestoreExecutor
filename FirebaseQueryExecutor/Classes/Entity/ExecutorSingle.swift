@@ -265,13 +265,13 @@ class ExecutorSingle: ExecutorFirestoreEntity {
                     try self?.validator.saveSnapshotData(snapshot: snapshot)
                 } catch {
                     single(.error(error))
-                    return
+                    return Disposables.create()
                 }
                 
                 if var object: [String:Any] = snapshot?.data() {
                     
                     object["itemID"] = snapshot?.documentID
-                    return single(.success(object))
+                    single(.success(object))
                 }
             })
             return Disposables.create()
