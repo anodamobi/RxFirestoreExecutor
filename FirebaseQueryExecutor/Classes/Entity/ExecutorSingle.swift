@@ -230,7 +230,7 @@ class ExecutorSingle: ExecutorFirestoreEntity {
             if !docID.isEmpty {
                 
                 let docRef = self.db.collection(col).document(docID)
-                docRef.setData(data, completion: { [weak self] (error) in
+                docRef.setData(data, completion: { (error) in
                     if let err = error {
                         single(.error(err))
                     }

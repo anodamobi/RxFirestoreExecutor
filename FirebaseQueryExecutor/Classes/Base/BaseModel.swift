@@ -21,7 +21,12 @@
 import Foundation
 import RxSwift
 
-open class BaseModel:  QueryExecutorProtocol {
+public protocol BaseType {
+    
+    init(dict: [String: Any])
+}
+
+open class BaseModel:  QueryExecutorProtocol, BaseType {
     
     public init() {}
     
@@ -31,33 +36,39 @@ open class BaseModel:  QueryExecutorProtocol {
     
     open var itemID = ""
     open var collection: CollectionRef = ""
+    ///Move to background!
     
-    //Success or error
-    open func push<Type: BaseModel>(_ object: Type) -> Single<Type> {
+    //Push
+    open func push<Type: BaseType>(_ object: Type) -> Single<Type> {
         let single = ExecutorSingle()
-        return single.pushObject(col: collection, docID: itemID, data: map(item: object as AnyObject))
+        
+        return single.pushObject(col: collection,
+                                 docID: itemID,
+                                 data: map(item: object as AnyObject))
             .flatMap({ (id) -> PrimitiveSequence<SingleTrait, Type> in
+                
                 self.itemID = id
                 return self.pull()
         })
     }
     
-    ///Move to background!
-    
-    open func pull<Type: BaseModel>() -> Single<Type> {
-        
+
+    //Pull
+    open func pull<Type: BaseType>() -> Single<Type> {
         let single = ExecutorSingle()
+        
         return single.loadSingleDoc(docID: itemID, collection: collection)
             .flatMap { (data) -> PrimitiveSequence<SingleTrait, Type> in
                 return Single.just(Type.init(dict: data))
         }
     }
     
-    open func observe<ModelType: BaseModel>() -> Observable<ModelType> {
+    //Observe
+    open func observe<Type: BaseType>() -> Observable<Type> {
         let observer = ExecutorObserveable()
         
-        return observer.observeSingle(documentID: itemID, collection: collection).flatMap({ (data) -> Observable<ModelType> in
-            return Observable<ModelType>.just(ModelType.init(dict: data))
+        return observer.observeSingle(documentID: itemID, collection: collection).flatMap({ (data) -> Observable<Type> in
+            return Observable<Type>.just(Type.init(dict: data))
         })
     }
    

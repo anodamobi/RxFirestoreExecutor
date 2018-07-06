@@ -58,9 +58,7 @@ PODS:
     - nanopb/encode (= 0.3.8)
   - nanopb/decode (0.3.8)
   - nanopb/encode (0.3.8)
-  - Nimble (7.1.2)
   - Protobuf (3.6.0)
-  - Quick (1.3.0)
   - RxFirestoreExecutor (0.1.6):
     - Firebase (~> 4.9.0)
     - Firebase/Firestore (~> 4.9.0)
@@ -70,8 +68,6 @@ PODS:
   - SwiftyJSON (4.1.0)
 
 DEPENDENCIES:
-  - Nimble
-  - Quick
   - RxFirestoreExecutor (from `../`)
 
 SPEC REPOS:
@@ -89,9 +85,7 @@ SPEC REPOS:
     - gRPC-RxLibrary
     - leveldb-library
     - nanopb
-    - Nimble
     - Protobuf
-    - Quick
     - RxSwift
     - SwiftyJSON
 
@@ -113,13 +107,11 @@ SPEC CHECKSUMS:
   gRPC-RxLibrary: fa6852f98d6ec0b73c0ec2f6406c26943099d501
   leveldb-library: 08cba283675b7ed2d99629a4bc5fd052cd2bb6a5
   nanopb: 5601e6bca2dbf1ed831b519092ec110f66982ca3
-  Nimble: 3835ba9f459daa6b347f8a8e110aaae8ca1920a8
   Protobuf: 0fc0ad8bec688b2a3017a139953e01374fedbd5f
-  Quick: 03278013f71aa05fe9ecabc94fbcc6835f1ee76f
   RxFirestoreExecutor: 235f7d0016d09960d4d5d0d714486c16f3ac8c44
   RxSwift: fd680d75283beb5e2559486f3c0ff852f0d35334
   SwiftyJSON: c29297daf073d2aa016295d5809cdd68045c39b3
 
-PODFILE CHECKSUM: 63dfb55ab385518678045d218b212a9dc0ffdb4f
+PODFILE CHECKSUM: 69df69ac626d23fa91633ead8d45ed141973a342
 
 COCOAPODS: 1.5.3
