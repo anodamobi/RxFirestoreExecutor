@@ -27,21 +27,17 @@ class ViewController: UIViewController {
     let executor = QueryExecutor<Target>()
     let bag = DisposeBag()
     
-    var model = Model(dict: [:])
+    var model = Model([:])
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        
         model.push(model).subscribe(onSuccess: { (data) in
-            self.model = data
+            model = data
         }) { (error) in
             
         }.disposed(by: bag)
-        
-        model.push(model).subscribe(onSuccess: <#T##((Model) -> Void)?##((Model) -> Void)?##(Model) -> Void#>, onError: <#T##((Error) -> Void)?##((Error) -> Void)?##(Error) -> Void#>)
-        
-        
+
         executor.request(.test).subscribe(onSuccess: { (_) in
         }) { (error) in
             
@@ -60,25 +56,26 @@ class ViewController: UIViewController {
 
 }
 
-class Model: BaseModel {
-    required init(dict: [String : Any]) {
-        super.init(dict: dict)
+class Model: BaseModel, SelfExecutable {
+    typealias ObjectType = Model
+    
+    required init(_ dict: [String : Any]) {
+        super.init(dict)
     }
     
-    override func pull<Type>() -> PrimitiveSequence<SingleTrait, Type> where Type : BaseType {
+    func pull() -> Single<ObjectType> {
         return super.pull()
     }
     
-    override func push<Type>(_ object: Type) -> PrimitiveSequence<SingleTrait, Type> where Type : BaseType {
-        
+    func push(_ object: ObjectType) -> Single<ObjectType> {
         return super.push(object)
     }
     
-    override func observe<ModelType>() -> Observable<ModelType> where ModelType : BaseType {
-        
+    func observe() -> Observable<ObjectType> {
         return super.observe()
     }
 }
+
 
 enum Target {
     case test

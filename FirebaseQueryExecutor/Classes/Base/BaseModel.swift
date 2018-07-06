@@ -21,54 +21,68 @@
 import Foundation
 import RxSwift
 
-public protocol BaseType {
-    
-    init(dict: [String: Any])
+public protocol Initializabel {
+    init(_ dict: [String: Any])
 }
 
-open class BaseModel:  QueryExecutorProtocol, BaseType {
+public protocol BaseTypeProtocol {
+
+    var collection: String { get set }
+    var itemID: String { get set }
+}
+
+public protocol SelfExecutable {
+    
+    associatedtype ObjectType
+    
+    func pull() -> Single<ObjectType>
+    func push(_ object: ObjectType) -> Single<ObjectType>
+    func observe() -> Observable<ObjectType>
+}
+
+
+open class BaseModel: QueryExecutorProtocol,Initializabel, BaseTypeProtocol {
     
     public init() {}
     
-    required public init(dict: [String: Any]) {
+    required public init(_ dict: [String: Any]) {
         itemID = dict["itemID"] as? String ?? ""
     }
-    
+
     open var itemID = ""
     open var collection: CollectionRef = ""
     ///Move to background!
     
     //Push
-    open func push<Type: BaseType>(_ object: Type) -> Single<Type> {
+    public func push<BaseType: Initializabel>(_ object: BaseType) -> Single<BaseType> {
         let single = ExecutorSingle()
         
         return single.pushObject(col: collection,
                                  docID: itemID,
                                  data: map(item: object as AnyObject))
-            .flatMap({ (id) -> PrimitiveSequence<SingleTrait, Type> in
+            .flatMap({ (id) -> Single<BaseType> in
                 
                 self.itemID = id
                 return self.pull()
         })
     }
     
-
-    //Pull
-    open func pull<Type: BaseType>() -> Single<Type> {
+    public func pull<BaseType: Initializabel>() -> Single<BaseType> {
         let single = ExecutorSingle()
         
         return single.loadSingleDoc(docID: itemID, collection: collection)
-            .flatMap { (data) -> PrimitiveSequence<SingleTrait, Type> in
-                return Single.just(Type.init(dict: data))
+            .flatMap { (data) -> Single<BaseType> in
+
+                return Single.just(BaseType.init(data))
         }
     }
     
     //Observe
-    open func observe<Type: BaseType>() -> Observable<Type> {
+    public func observe<BaseType: Initializabel>() -> Observable<BaseType> {
         let observer = ExecutorObserveable()
         
-        return observer.observeSingle(documentID: itemID, collection: collection).flatMap({ (data) -> Observable<Type> in
-            return Observable<Type>.just(Type.init(dict: data))
+        return observer.observeSingle(documentID: itemID, collection: collection).flatMap({ (data) -> Observable<BaseType> in
+            return Observable<BaseType>.just(BaseType.init(data))
         })
     }
    
@@ -91,6 +105,7 @@ extension ModelError: LocalizedError {
 extension BaseModel {
     
     public func map(item: AnyObject) -> [String:Any] {
+        
         var result: [String:Any] = [:]
         let mirrorObject = Mirror(reflecting: item)
         for (name, value) in mirrorObject.children {
