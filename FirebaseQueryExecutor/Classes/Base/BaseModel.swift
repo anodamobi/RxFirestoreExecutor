@@ -49,7 +49,6 @@ open class BaseModel:  QueryExecutorProtocol {
         let observer = ExecutorObserveable()
         
         return observer.observeSingleDoc(documentID: objectID)
-           // .map({ return ($0 as? [String: Any]) ?? [:] })
             .flatMap({ (model) -> Observable<ModelType> in
             //Smells bad :o
             var emptyObservable = Observable<ModelType>.create({ (observe) in
@@ -61,7 +60,6 @@ open class BaseModel:  QueryExecutorProtocol {
                 emptyObservable = dict.mapTo(item: ModelType.self)
             }
             return emptyObservable
-               // return Observable.just(model.mapTo(item: ModelType.self))
         })
     }
    
@@ -102,8 +100,6 @@ extension Dictionary where Key == String, Value: Any {
     }
     
     public func mapTo<B: BaseModel>(item: B.Type) -> Observable<B> {
-
-            let object = B.init(dict: self)
-            return Observable.just(object)
+        return Observable.just(B.init(dict: self))
     }
 }
