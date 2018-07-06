@@ -204,4 +204,45 @@ class ExecutorObserveable: ExecutorFirestoreEntity {
             }
         })
     }
+    
+//    MARK: self-observing methods
+    
+    func observeSingle(documentID: String, collection: String) -> Observable<[String: Any]> {
+        return Observable.create({ (observe) in
+            
+            let collection = self.collectionString
+            do {
+                try self.validator.saveSingleDoc(collection: collection, singleDoc: documentID)
+            } catch {
+                observe.onError(error)
+                return Disposables.create()
+            }
+            
+            
+            let colRef = self.db.collection(collection ?? "").document(documentID)
+            
+            let listener = colRef.addSnapshotListener({ [weak self] (snapshot, error) in
+                
+                if let err = error {
+                    observe.onError(err)
+                }
+                
+                do {
+                    try self?.validator.saveSnapshotData(snapshot: snapshot)
+                } catch {
+                    observe.onError(error)
+                    return
+                }
+                
+                if var object: [String:Any] = snapshot?.data() {
+                    object["itemID"] =  snapshot?.documentID
+                    observe.onNext(object)
+                }
+                
+            })
+            return Disposables.create {
+                listener.remove()
+            }
+        })
+    }
 }

@@ -26,40 +26,34 @@ open class BaseModel:  QueryExecutorProtocol {
     public init() {}
     
     required public init(dict: [String: Any]) {
-        
+        itemID = dict["itemID"] as? String ?? ""
     }
     
-    var objectID = ""
-    
+    var itemID = ""
     open var collection: CollectionRef = ""
     
     //Success or error
     open func push(_ object: Any) -> Single<Any> {
         let single = ExecutorSingle()
-        return single.pushObject(col: collection, docID: objectID, data: map(item: object as AnyObject))
+        return single.pushObject(col: collection, docID: itemID, data: map(item: object as AnyObject))
     }
     
-    open func pull() -> Single<Any> {
+    ///Move to background!
+    
+    open func pull<Type: BaseModel>() -> Single<Type> {
         
         let single = ExecutorSingle()
-        return single.load(singleDoc: objectID)
+        return single.loadSingleDoc(docID: itemID, collection: collection)
+            .flatMap { (data) -> PrimitiveSequence<SingleTrait, Type> in
+                return Single.just(Type.init(dict: data))
+        }
     }
     
     open func observe<ModelType: BaseModel>() -> Observable<ModelType> {
         let observer = ExecutorObserveable()
         
-        return observer.observeSingleDoc(documentID: objectID)
-            .flatMap({ (model) -> Observable<ModelType> in
-            //Smells bad :o
-            var emptyObservable = Observable<ModelType>.create({ (observe) in
-                observe.onError(ModelError.failedToConvertToDict)
-                return Disposables.create()
-            })
-
-            if let dict = model as? [String: Any] {
-                emptyObservable = dict.mapTo(item: ModelType.self)
-            }
-            return emptyObservable
+        return observer.observeSingle(documentID: itemID, collection: collection).flatMap({ (data) -> Observable<ModelType> in
+            return Observable<ModelType>.just(ModelType.init(dict: data))
         })
     }
    
@@ -90,16 +84,5 @@ extension BaseModel {
             result[name] = value
         }
         return result
-    }
-}
-
-extension Dictionary where Key == String, Value: Any {
-    
-    public func mapTo<T: BaseModel>(item: T.Type) -> Single<T> {
-        return Single.just(T.init(dict: self))
-    }
-    
-    public func mapTo<B: BaseModel>(item: B.Type) -> Observable<B> {
-        return Observable.just(B.init(dict: self))
     }
 }

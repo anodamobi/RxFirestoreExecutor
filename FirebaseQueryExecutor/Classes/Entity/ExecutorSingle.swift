@@ -220,6 +220,8 @@ class ExecutorSingle: ExecutorFirestoreEntity {
     }
     
     
+    //    MARK: self-executing methods
+    
     //TODO: Pavel: Prichesat' proverit'
     func pushObject(col: String, docID: String, data: [String: Any]) -> Single<Any> {
         
@@ -236,19 +238,42 @@ class ExecutorSingle: ExecutorFirestoreEntity {
             } else {
                 
                let id = self.db.collection(col).addDocument(data: data, completion: { (error) in
-//                    if error == nil {
-//                        single(.success(true))
-//                    } else {
-                        if let err = error {
-                            single(.error(err))
-                        }
-//                    }
+                    if let err = error {
+                        single(.error(err))
+                    }
                 }).documentID
                 if !id.isEmpty {
                     single(.success(id))
                 }
             }
             
+            return Disposables.create()
+        })
+    }
+    
+    func loadSingleDoc(docID: String, collection: String) -> Single<[String: Any]> {
+        return Single.create(subscribe: { (single) in
+            
+            let colRef = self.db.collection(collection)
+            colRef.document(docID).getDocument(completion: { [weak self] (snapshot, error) in
+                
+                if let err = error {
+                    single(.error(err))
+                }
+                
+                do {
+                    try self?.validator.saveSnapshotData(snapshot: snapshot)
+                } catch {
+                    single(.error(error))
+                    return
+                }
+                
+                if var object: [String:Any] = snapshot?.data() {
+                    
+                    object["itemID"] = snapshot?.documentID
+                    return single(.success(object))
+                }
+            })
             return Disposables.create()
         })
     }
