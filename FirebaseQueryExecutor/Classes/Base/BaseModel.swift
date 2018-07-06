@@ -29,13 +29,17 @@ open class BaseModel:  QueryExecutorProtocol {
         itemID = dict["itemID"] as? String ?? ""
     }
     
-    var itemID = ""
+    open var itemID = ""
     open var collection: CollectionRef = ""
     
     //Success or error
-    open func push(_ object: Any) -> Single<Any> {
+    open func push<Type: BaseModel>(_ object: Type) -> Single<Type> {
         let single = ExecutorSingle()
         return single.pushObject(col: collection, docID: itemID, data: map(item: object as AnyObject))
+            .flatMap({ (id) -> PrimitiveSequence<SingleTrait, Type> in
+                self.itemID = id
+                return self.pull()
+        })
     }
     
     ///Move to background!

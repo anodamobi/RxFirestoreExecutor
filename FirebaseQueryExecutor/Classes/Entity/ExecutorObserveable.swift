@@ -222,7 +222,7 @@ class ExecutorObserveable: ExecutorFirestoreEntity {
                     try self?.validator.saveSnapshotData(snapshot: snapshot)
                 } catch {
                     observe.onError(error)
-                    return Disposables.create()
+                    return
                 }
                 
                 if var object: [String:Any] = snapshot?.data() {

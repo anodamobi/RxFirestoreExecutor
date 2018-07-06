@@ -223,7 +223,7 @@ class ExecutorSingle: ExecutorFirestoreEntity {
     //    MARK: self-executing methods
     
     //TODO: Pavel: Prichesat' proverit'
-    func pushObject(col: String, docID: String, data: [String: Any]) -> Single<Any> {
+    func pushObject(col: String, docID: String, data: [String: Any]) -> Single<String> {
         
         return Single.create(subscribe: { (single) in
             
@@ -231,7 +231,9 @@ class ExecutorSingle: ExecutorFirestoreEntity {
                 
                 let docRef = self.db.collection(col).document(docID)
                 docRef.setData(data, completion: { [weak self] (error) in
-                    self?.onError(single, error: error)
+                    if let err = error {
+                        single(.error(err))
+                    }
                     
                     single(.success(docID))
                 })
@@ -265,7 +267,7 @@ class ExecutorSingle: ExecutorFirestoreEntity {
                     try self?.validator.saveSnapshotData(snapshot: snapshot)
                 } catch {
                     single(.error(error))
-                    return Disposables.create()
+                    return
                 }
                 
                 if var object: [String:Any] = snapshot?.data() {
