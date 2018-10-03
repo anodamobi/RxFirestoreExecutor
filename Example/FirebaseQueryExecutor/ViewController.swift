@@ -31,7 +31,7 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        model.push(model).subscribe(onSuccess: { [unowned self] (data) in
+        model.push().subscribe(onSuccess: { [unowned self] (data) in
            self.model = self.model.cast(data: data)
         }) { (error) in
             
@@ -49,7 +49,7 @@ class ViewController: UIViewController {
                 }
             }
             print(error)
-            }.disposed(by: bag)
+        }.disposed(by: bag)
         
     }
 

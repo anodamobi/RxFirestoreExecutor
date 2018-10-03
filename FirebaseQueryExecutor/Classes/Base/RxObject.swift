@@ -16,15 +16,15 @@ open class RxObject: FEObject, SelfExecutable {
         return super.pull()
     }
 
-    open func push(_ object: RxObject) -> Single<RxObject> {
-        return super.push(object)
+    open func push() -> Single<RxObject> {
+        return super.push(self)
     }
 
-    open func observe() -> Observable<RxObject> {
+    open func observe() -> Observable<ObjectType> {
         return super.observe()
     }
     
-    public func cast<ObjType: RxObject>(data: RxObject) -> ObjType {
+    open func cast<ObjType: RxObject>(data: RxObject) -> ObjType {
         var obj: ObjType = ObjType([:])
         if let dataModel = data as? ObjType {
             obj = dataModel
