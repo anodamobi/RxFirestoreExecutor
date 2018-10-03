@@ -26,6 +26,8 @@ open class FEObject: QueryExecutorProtocol, Initializabel, BaseTypeProtocol {
     open var itemID = ""
     open var collection: CollectionRef = ""
     
+    let observer = ExecutorObserveable()
+    
     convenience public init() {
         self.init([:])
     }
@@ -64,7 +66,7 @@ open class FEObject: QueryExecutorProtocol, Initializabel, BaseTypeProtocol {
     
     //Observe
     public func observe<BaseType: Initializabel>() -> Observable<BaseType> {
-        let observer = ExecutorObserveable()
+        
         
         return observer.observeSingle(documentID: itemID, collection: collection)
             .flatMap({ (data) -> Observable<BaseType> in
