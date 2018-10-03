@@ -26,14 +26,13 @@ class ViewController: UIViewController {
 
     let executor = QueryExecutor<Target>()
     let bag = DisposeBag()
-    
     var model = Model([:])
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         model.push(model).subscribe(onSuccess: { [unowned self] (data) in
-            self.model = data
+           self.model = self.model.cast(data: data)
         }) { (error) in
             
         }.disposed(by: bag)
@@ -58,20 +57,15 @@ class ViewController: UIViewController {
 
 class Model: RxObject {
     
-    required init(_ dict: [String : Any]) {
-        super.init(dict)
-    }
+    var userName: String = ""
+    var userAge: Int = 0
     
-    override func pull() -> Single<ObjectType> {
-        return super.pull()
-    }
-    
-    override func push(_ object: ObjectType) -> Single<ObjectType> {
-        return super.push(object)
-    }
-    
-    override func observe() -> Observable<ObjectType> {
-        return super.observe()
+    required init(_ result: [String : Any]) {
+        userName = result["userName"] as? String ?? ""
+        userAge = result["userAge"] as? Int ?? 0
+        
+        super.init(result)
+        self.collection = "users"
     }
 }
 

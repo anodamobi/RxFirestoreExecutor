@@ -23,14 +23,18 @@ import RxSwift
 
 open class FEObject: QueryExecutorProtocol, Initializabel, BaseTypeProtocol {
     
-    public init() {}
-    
-    required public init(_ dict: [String: Any]) {
-        itemID = dict["itemID"] as? String ?? ""
-    }
-
     open var itemID = ""
     open var collection: CollectionRef = ""
+    
+    convenience public init() {
+        self.init([:])
+    }
+    
+    required public init(_ result: [String: Any]) {
+        itemID = result["itemID"] as? String ?? ""
+    }
+
+
     ///Move to background!
     
     //Push
@@ -47,6 +51,7 @@ open class FEObject: QueryExecutorProtocol, Initializabel, BaseTypeProtocol {
         })
     }
     
+    //pull
     public func pull<BaseType: Initializabel>() -> Single<BaseType> {
         let single = ExecutorSingle()
         

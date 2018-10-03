@@ -23,4 +23,12 @@ open class RxObject: FEObject, SelfExecutable {
     open func observe() -> Observable<RxObject> {
         return super.observe()
     }
+    
+    public func cast<ObjType: RxObject>(data: RxObject) -> ObjType {
+        var obj: ObjType = ObjType([:])
+        if let dataModel = data as? ObjType {
+            obj = dataModel
+        }
+        return obj
+    }
 }
