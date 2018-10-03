@@ -32,8 +32,8 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        model.push(model).subscribe(onSuccess: { (data) in
-            model = data
+        model.push(model).subscribe(onSuccess: { [unowned self] (data) in
+            self.model = data
         }) { (error) in
             
         }.disposed(by: bag)
@@ -56,22 +56,21 @@ class ViewController: UIViewController {
 
 }
 
-class Model: BaseModel, SelfExecutable {
-    typealias ObjectType = Model
+class Model: RxObject {
     
     required init(_ dict: [String : Any]) {
         super.init(dict)
     }
     
-    func pull() -> Single<ObjectType> {
+    override func pull() -> Single<ObjectType> {
         return super.pull()
     }
     
-    func push(_ object: ObjectType) -> Single<ObjectType> {
+    override func push(_ object: ObjectType) -> Single<ObjectType> {
         return super.push(object)
     }
     
-    func observe() -> Observable<ObjectType> {
+    override func observe() -> Observable<ObjectType> {
         return super.observe()
     }
 }

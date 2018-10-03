@@ -21,27 +21,7 @@
 import Foundation
 import RxSwift
 
-public protocol Initializabel {
-    init(_ dict: [String: Any])
-}
-
-public protocol BaseTypeProtocol {
-
-    var collection: String { get set }
-    var itemID: String { get set }
-}
-
-public protocol SelfExecutable {
-    
-    associatedtype ObjectType
-    
-    func pull() -> Single<ObjectType>
-    func push(_ object: ObjectType) -> Single<ObjectType>
-    func observe() -> Observable<ObjectType>
-}
-
-
-open class BaseModel: QueryExecutorProtocol,Initializabel, BaseTypeProtocol {
+open class FEObject: QueryExecutorProtocol, Initializabel, BaseTypeProtocol {
     
     public init() {}
     
@@ -81,7 +61,8 @@ open class BaseModel: QueryExecutorProtocol,Initializabel, BaseTypeProtocol {
     public func observe<BaseType: Initializabel>() -> Observable<BaseType> {
         let observer = ExecutorObserveable()
         
-        return observer.observeSingle(documentID: itemID, collection: collection).flatMap({ (data) -> Observable<BaseType> in
+        return observer.observeSingle(documentID: itemID, collection: collection)
+            .flatMap({ (data) -> Observable<BaseType> in
             return Observable<BaseType>.just(BaseType.init(data))
         })
     }
@@ -102,7 +83,7 @@ extension ModelError: LocalizedError {
     
 }
 
-extension BaseModel {
+extension FEObject {
     
     public func map(item: AnyObject) -> [String:Any] {
         
