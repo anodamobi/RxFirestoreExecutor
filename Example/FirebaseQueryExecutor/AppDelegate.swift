@@ -21,6 +21,7 @@
 import UIKit
 import RxFirestoreExecutor
 import RxSwift
+import Firebase
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -30,7 +31,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     let bag = DisposeBag()
 
     func application(_ application: UIApplication,
-                     didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
+                     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
+        FirebaseApp.configure()
         executor.request(.test).subscribe(onSuccess: { (_) in
         }) { (error) in
 
