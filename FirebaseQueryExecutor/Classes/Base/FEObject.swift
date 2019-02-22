@@ -99,7 +99,15 @@ extension FEObject {
         for (name, value) in mirrorObject.children {
             guard let name = name else { continue }
             print(name)
-            result[name] = value
+            var innerValue: Any?
+            if value is FEObject {
+                innerValue = map(item: value as AnyObject)
+            } else {
+                innerValue = value
+            }
+            if let val = innerValue {
+                result[name] = val
+            }
         }
         return result
     }
