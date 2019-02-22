@@ -20,7 +20,6 @@
 
 import Foundation
 import RxSwift
-import FirebaseFirestore.FIRSetOptions
 import FirebaseFirestore.FIRQuerySnapshot
 import FirebaseFirestore.FIRDocumentReference
 import SwiftyJSON
@@ -209,7 +208,7 @@ class ExecutorSingle: ExecutorFirestoreEntity {
                 
                 
                 let docRef = self.db.collection(collection ?? "").document(docID ?? "")
-                docRef.setData(dataDict ?? [:], options: .merge(), completion: { [weak self] (error) in
+                docRef.setData(dataDict ?? [:], merge: true, completion: { [weak self] (error) in
                     self?.onError(single, error: error)
                     
                     single(.success(true))
