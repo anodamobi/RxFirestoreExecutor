@@ -31,6 +31,8 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        
+        
         model.push().subscribe(onSuccess: { [unowned self] (data) in
            self.model = self.model.cast(data: data)
         }) { (error) in
@@ -61,9 +63,8 @@ class Model: RxObject {
     var userAge: Int = 0
     
     required init(_ result: [String : Any]) {
-        userName = result["userName"] as? String ?? ""
-        userAge = result["userAge"] as? Int ?? 0
-        
+//        userName = result["userName"] as? String ?? ""
+//        userAge = result["userAge"] as? Int ?? 0
         super.init(result)
         self.collection = "users"
     }

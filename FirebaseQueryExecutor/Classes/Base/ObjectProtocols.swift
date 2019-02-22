@@ -8,7 +8,7 @@
 import Foundation
 import RxSwift
 
-public protocol Initializabel {
+public protocol Initializable {
     init(_ dict: [String: Any])
 }
 

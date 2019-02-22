@@ -21,26 +21,32 @@
 import Foundation
 import RxSwift
 
-open class FEObject: QueryExecutorProtocol, Initializabel, BaseTypeProtocol {
+open class FEObject: NSObject, QueryExecutorProtocol, Initializable, BaseTypeProtocol {
     
     open var itemID = ""
     open var collection: CollectionRef = ""
+    var mirroredValue: [String: Any] = [:]
     
     let observer = ExecutorObserveable()
     
-    convenience public init() {
+    convenience public override init() {
         self.init([:])
     }
     
     required public init(_ result: [String: Any]) {
+        super.init()
         itemID = result["itemID"] as? String ?? ""
+        let keys = mirroredValue.keys
+        for key in keys {
+            setValue(result[key], forKey: key)
+        }
     }
 
 
     ///Move to background!
     
     //Push
-    public func push<BaseType: Initializabel>(_ object: BaseType) -> Single<BaseType> {
+    public func push<BaseType: Initializable>(_ object: BaseType) -> Single<BaseType> {
         let single = ExecutorSingle()
         
         return single.pushObject(col: collection,
@@ -54,7 +60,7 @@ open class FEObject: QueryExecutorProtocol, Initializabel, BaseTypeProtocol {
     }
     
     //pull
-    public func pull<BaseType: Initializabel>() -> Single<BaseType> {
+    public func pull<BaseType: Initializable>() -> Single<BaseType> {
         let single = ExecutorSingle()
         
         return single.loadSingleDoc(docID: itemID, collection: collection)
@@ -65,7 +71,7 @@ open class FEObject: QueryExecutorProtocol, Initializabel, BaseTypeProtocol {
     }
     
     //Observe
-    public func observe<BaseType: Initializabel>() -> Observable<BaseType> {
+    public func observe<BaseType: Initializable>() -> Observable<BaseType> {
         
         
         return observer.observeSingle(documentID: itemID, collection: collection)
@@ -101,6 +107,7 @@ extension FEObject {
             print(name)
             result[name] = value
         }
+        mirroredValue = result
         return result
     }
 }
