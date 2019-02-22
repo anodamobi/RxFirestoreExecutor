@@ -13,7 +13,6 @@
 		607FACDD1AFB9204008FA782 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 607FACDC1AFB9204008FA782 /* Images.xcassets */; };
 		607FACE01AFB9204008FA782 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 607FACDE1AFB9204008FA782 /* LaunchScreen.xib */; };
 		72AD689C73EE1FDA2677C851 /* Pods_FirebaseQueryExecutor_Example.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9E6EC6C4B425C07D4A3A6934 /* Pods_FirebaseQueryExecutor_Example.framework */; };
-		E9BB9BD8222043AB00712D0B /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = E9BB9BD7222043AB00712D0B /* GoogleService-Info.plist */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -36,7 +35,6 @@
 		9E6EC6C4B425C07D4A3A6934 /* Pods_FirebaseQueryExecutor_Example.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_FirebaseQueryExecutor_Example.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D5690AD5CDCFED6336E16E9B /* Pods-FirebaseQueryExecutor_Example.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-FirebaseQueryExecutor_Example.release.xcconfig"; path = "Pods/Target Support Files/Pods-FirebaseQueryExecutor_Example/Pods-FirebaseQueryExecutor_Example.release.xcconfig"; sourceTree = "<group>"; };
 		D6E20F88B616045971DDF764 /* Pods_FirebaseQueryExecutor_Tests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_FirebaseQueryExecutor_Tests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		E9BB9BD7222043AB00712D0B /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "../../../../GoogleService-Info.plist"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -85,7 +83,6 @@
 		607FACD21AFB9204008FA782 /* Example for FirebaseQueryExecutor */ = {
 			isa = PBXGroup;
 			children = (
-				E9BB9BD7222043AB00712D0B /* GoogleService-Info.plist */,
 				5655A59B20EE1150002CCBC6 /* AppDelegate.swift */,
 				607FACD71AFB9204008FA782 /* ViewController.swift */,
 				607FACD91AFB9204008FA782 /* Main.storyboard */,
@@ -204,7 +201,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				607FACDB1AFB9204008FA782 /* Main.storyboard in Resources */,
-				E9BB9BD8222043AB00712D0B /* GoogleService-Info.plist in Resources */,
 				607FACE01AFB9204008FA782 /* LaunchScreen.xib in Resources */,
 				607FACDD1AFB9204008FA782 /* Images.xcassets in Resources */,
 			);

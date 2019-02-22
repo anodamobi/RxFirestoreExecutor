@@ -25,7 +25,6 @@ open class FEObject: NSObject, QueryExecutorProtocol, Initializable, BaseTypePro
     
     open var itemID = ""
     open var collection: CollectionRef = ""
-    var mirroredValue: [String: Any] = [:]
     
     let observer = ExecutorObserveable()
     
@@ -36,10 +35,6 @@ open class FEObject: NSObject, QueryExecutorProtocol, Initializable, BaseTypePro
     required public init(_ result: [String: Any]) {
         super.init()
         itemID = result["itemID"] as? String ?? ""
-        let keys = mirroredValue.keys
-        for key in keys {
-            setValue(result[key], forKey: key)
-        }
     }
 
 
@@ -72,7 +67,6 @@ open class FEObject: NSObject, QueryExecutorProtocol, Initializable, BaseTypePro
     
     //Observe
     public func observe<BaseType: Initializable>() -> Observable<BaseType> {
-        
         
         return observer.observeSingle(documentID: itemID, collection: collection)
             .flatMap({ (data) -> Observable<BaseType> in
@@ -107,7 +101,6 @@ extension FEObject {
             print(name)
             result[name] = value
         }
-        mirroredValue = result
         return result
     }
 }
