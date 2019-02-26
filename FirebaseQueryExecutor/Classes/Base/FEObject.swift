@@ -21,59 +21,55 @@
 import Foundation
 import RxSwift
 
-open class FEObject: NSObject, QueryExecutorProtocol, Initializable, BaseTypeProtocol {
+@objcMembers
+open class FEObject: NSObject, QueryExecutorProtocol, BaseTypeProtocol {
     
-    open var itemID = ""
-    open var collection: CollectionRef = ""
+    dynamic open var itemID = ""
+    dynamic open var collection: CollectionRef = ""
     
     let observer = ExecutorObserveable()
     
-    convenience public override init() {
-        self.init([:])
+    
+    required override public init() {
+        super.init()
     }
     
-    required public init(_ result: [String: Any]) {
-        super.init()
-        itemID = result["itemID"] as? String ?? ""
-    }
-
-
+    
     ///Move to background!
     
     //Push
-    public func push<BaseType: Initializable>(_ object: BaseType) -> Single<BaseType> {
+    internal func push<BaseType>(_ object: BaseType) -> Single<[String: Any]> {
         let single = ExecutorSingle()
         
         return single.pushObject(col: collection,
                                  docID: itemID,
                                  data: map(item: object as AnyObject))
-            .flatMap({ (id) -> Single<BaseType> in
+            .flatMap({ (id) -> Single<[String: Any]> in
                 
                 self.itemID = id
                 return self.pull()
-        })
+            })
     }
     
     //pull
-    public func pull<BaseType: Initializable>() -> Single<BaseType> {
+    internal func pull() -> Single<[String:Any]> {
         let single = ExecutorSingle()
         
         return single.loadSingleDoc(docID: itemID, collection: collection)
-            .flatMap { (data) -> Single<BaseType> in
-
-                return Single.just(BaseType.init(data))
+            .flatMap { (data) -> Single<[String: Any]> in
+                
+                return Single.just(data)
         }
     }
     
     //Observe
-    public func observe<BaseType: Initializable>() -> Observable<BaseType> {
-        
+    internal func observe() -> Observable<[String:Any]> {
         return observer.observeSingle(documentID: itemID, collection: collection)
-            .flatMap({ (data) -> Observable<BaseType> in
-            return Observable<BaseType>.just(BaseType.init(data))
-        })
+            .flatMap({ (data) -> Observable<[String: Any]> in
+                return Observable.just(data)
+            })
     }
-   
+    
 }
 
 enum ModelError: Error {
