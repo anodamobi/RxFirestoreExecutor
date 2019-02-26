@@ -81,11 +81,15 @@ open class RxObject: FEObject, SelfExecutable {
                     if let value = value(forKey: key) as? RxObject {
                         value.map(dict)
                     } else {
-                        setValue(result[key], forKey: key)
+                        if !(result[key] is NSNull) {
+                            setValue(result[key], forKey: key)
+                        }
                     }
                 }
             } else {
-                setValue(result[key], forKey: key)
+                if !(result[key] is NSNull) {
+                    setValue(result[key], forKey: key)
+                }
             }
         }
     }
