@@ -29,13 +29,9 @@ open class FEObject: NSObject, QueryExecutorProtocol, BaseTypeProtocol {
     
     let observer = ExecutorObserveable()
     
-    
     required override public init() {
         super.init()
     }
-    
-    
-    ///Move to background!
     
     //Push
     internal func push<BaseType>(_ object: BaseType) -> Single<[String: Any]> {
@@ -64,8 +60,10 @@ open class FEObject: NSObject, QueryExecutorProtocol, BaseTypeProtocol {
     
     //Observe
     internal func observe() -> Observable<[String:Any]> {
+        
         return observer.observeSingle(documentID: itemID, collection: collection)
             .flatMap({ (data) -> Observable<[String: Any]> in
+                
                 return Observable.just(data)
             })
     }
@@ -88,13 +86,14 @@ extension ModelError: LocalizedError {
 
 extension FEObject {
     
-    public func map(item: AnyObject) -> [String:Any] {
+    public func map(item: AnyObject) -> [String: Any] {
         
         var result: [String:Any] = [:]
         let mirrorObject = Mirror(reflecting: item)
+        
         for (name, value) in mirrorObject.children {
             guard let name = name else { continue }
-            print(name)
+            
             var innerValue: Any?
             if value is FEObject {
                 innerValue = map(item: value as AnyObject)
