@@ -26,18 +26,18 @@ class ViewController: UIViewController {
 
     let executor = QueryExecutor<Target>()
     let bag = DisposeBag()
-    var model = Model([:])
+    var model: Model?
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        model = Model()
         
-        
-        model.push().subscribe(onSuccess: { [unowned self] (data) in
-           self.model = self.model.cast(data: data)
+        model?.pushObject(updated: {
+            
         }) { (error) in
             
-        }.disposed(by: bag)
+        }
 
         executor.request(.test).subscribe(onSuccess: { (_) in
         }) { (error) in
@@ -62,10 +62,8 @@ class Model: RxObject {
     var userName: String = ""
     var userAge: Int = 0
     
-    required init(_ result: [String : Any]) {
-//        userName = result["userName"] as? String ?? ""
-//        userAge = result["userAge"] as? Int ?? 0
-        super.init(result)
+    required init() {
+        super.init()
         self.collection = "users"
     }
 }

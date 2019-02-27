@@ -36,6 +36,6 @@ public protocol SelfExecutable {
     // Update block needed to make action whenever model updated, or to make sync when several model updated at a same time.
     //Error block is needed in case update was done with errors. In this case we will still work with old model.
     func pullObject(updated: @escaping UpdateBlock, _ errorBlock: @escaping ErrorBlock)
-    func pushObject(_ object: ObjectType, updated: @escaping UpdateBlock, _ errorBlock: @escaping ErrorBlock)
+    func pushObject(updated: @escaping UpdateBlock, _ errorBlock: @escaping ErrorBlock)
     func observe(updated: @escaping UpdateBlock, _ errorBlock: @escaping ErrorBlock)
 }

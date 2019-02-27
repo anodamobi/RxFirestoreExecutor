@@ -46,11 +46,10 @@ open class RxObject: FEObject, SelfExecutable {
             }.disposed(by: bag)
     }
     
-    public func pushObject(_ object: RxObject,
-                           updated: @escaping UpdateBlock,
+    public func pushObject(updated: @escaping UpdateBlock,
                            _ errorBlock: @escaping ErrorBlock) {
         
-        super.push(object)
+        super.push(self)
             .subscribe(onSuccess: { [weak self] (data) in
                 guard let `self` = self else {
                     updated()
