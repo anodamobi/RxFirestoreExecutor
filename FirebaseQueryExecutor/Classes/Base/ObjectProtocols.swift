@@ -38,4 +38,18 @@ public protocol SelfExecutable {
     func pullObject(updated: @escaping UpdateBlock, _ errorBlock: @escaping ErrorBlock)
     func pushObject(updated: @escaping UpdateBlock, _ errorBlock: @escaping ErrorBlock)
     func observe(updated: @escaping UpdateBlock, _ errorBlock: @escaping ErrorBlock)
+    
+    //Conditional pulls
+    func pullObject(traits: QueryTargetProtocol.TraitList,
+                    _ updated: @escaping UpdateBlock,
+                    _ errorBlock: @escaping ErrorBlock)
+    
+    func pullObject(trait: QueryTargetProtocol.Trait,
+                    _ updated: @escaping UpdateBlock,
+                    _ errorBlock: @escaping ErrorBlock)
+    
+    //Conditional pushes
+    func pushObject(subObjects: [FEObject],
+                    _ updated: @escaping UpdateBlock,
+                    _ errorBlock: @escaping ErrorBlock)
 }

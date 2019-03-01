@@ -28,6 +28,8 @@ open class RxObject: FEObject, SelfExecutable {
     
     public typealias ObjectType = RxObject
     
+    //MARK: pull
+    
     public func pullObject(updated: @escaping UpdateBlock,
                            _ errorBlock: @escaping ErrorBlock) {
         
@@ -46,6 +48,20 @@ open class RxObject: FEObject, SelfExecutable {
             }.disposed(by: bag)
     }
     
+    public func pullObject(traits: QueryTargetProtocol.TraitList,
+                           _ updated: @escaping UpdateBlock,
+                           _ errorBlock: @escaping ErrorBlock) {
+        
+    }
+    
+    public func pullObject(trait: QueryTargetProtocol.Trait,
+                           _ updated: @escaping UpdateBlock,
+                           _ errorBlock: @escaping ErrorBlock) {
+        
+    }
+    
+    //MARK: Push
+    
     public func pushObject(updated: @escaping UpdateBlock,
                            _ errorBlock: @escaping ErrorBlock) {
         
@@ -63,6 +79,14 @@ open class RxObject: FEObject, SelfExecutable {
                 errorBlock(error)
             }.disposed(by: bag)
     }
+    
+    public func pushObject(subObjects: [FEObject],
+                           _ updated: @escaping UpdateBlock,
+                           _ errorBlock: @escaping ErrorBlock) {
+        
+    }
+    
+    //MARK Observe
     
     public func observe(updated: @escaping UpdateBlock,
                         _ errorBlock: @escaping ErrorBlock) {
@@ -84,7 +108,7 @@ open class RxObject: FEObject, SelfExecutable {
     
     //Self mapping from dictionary to Object
     //This will work only if variables are Dynamic
-    func map(_ result: [String: Any]) {
+    private func map(_ result: [String: Any]) {
         let keys = result.keys
         for key in keys {
             

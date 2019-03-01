@@ -34,7 +34,7 @@ open class FEObject: NSObject, QueryExecutorProtocol, BaseTypeProtocol {
     }
     
     //Push
-    internal func push<BaseType>(_ object: BaseType) -> Single<[String: Any]> {
+    func push<BaseType>(_ object: BaseType) -> Single<[String: Any]> {
         let single = ExecutorSingle()
         
         return single.pushObject(col: collection,
@@ -47,19 +47,23 @@ open class FEObject: NSObject, QueryExecutorProtocol, BaseTypeProtocol {
             })
     }
     
-    //pull
-    internal func pull() -> Single<[String:Any]> {
+    //Pull
+    func pull(_ traits: TraitList = nil) -> Single<[String: Any]> {
         let single = ExecutorSingle()
         
-        return single.loadSingleDoc(docID: itemID, collection: collection)
-            .flatMap { (data) -> Single<[String: Any]> in
-                
-                return Single.just(data)
+        if traits == nil {
+            return single.loadSingleDoc(docID: itemID, collection: collection)
+                .flatMap { (data) -> Single<[String: Any]> in
+                    
+                    return Single.just(data)
+            }
+        } else {
+            return single.loadSingleDoc(traits: traits, collection: collection)
         }
     }
     
     //Observe
-    internal func observe() -> Observable<[String:Any]> {
+    func observe() -> Observable<[String:Any]> {
         
         return observer.observeSingle(documentID: itemID, collection: collection)
             .flatMap({ (data) -> Observable<[String: Any]> in
@@ -96,6 +100,7 @@ extension FEObject {
             
             var innerValue: Any?
             if value is FEObject {
+                
                 innerValue = map(item: value as AnyObject)
             } else {
                 innerValue = value

@@ -56,19 +56,54 @@ class ExecutorSingle: ExecutorFirestoreEntity {
     
     
     private func loadCollection() -> Single<Any> {
-            return Single.create(subscribe: { (single) in
+        return Single.create(subscribe: { [unowned self] (single) in
+            
+            let collection = self.collectionString
+            do {
+                try self.validator.saveSingle(collection: collection)
+            } catch {
+                single(.error(error))
+                return Disposables.create()
+            }
+            
+            
+            let colRef = self.db.collection(collection ?? "")
+            colRef.getDocuments(completion: { [weak self] (snapshot, error) in
+                self?.onError(single, error: error)
                 
-                let collection = self.collectionString
                 do {
-                    try self.validator.saveSingle(collection: collection)
+                    try self?.validator.saveSnapshotDocuments(documents: snapshot?.documents)
                 } catch {
-                    single(.error(error))
-                    return Disposables.create()
+                    self?.onError(single, error: error)
+                    return
                 }
                 
-                
-                let colRef = self.db.collection(collection ?? "")
-                colRef.getDocuments(completion: { [weak self] (snapshot, error) in
+                if let objects = snapshot?.documents.map({ (single) -> JSON in
+                    return JSON(self?.composeObject(document: single) ?? [:])
+                }) {
+                    single(.success(objects))
+                }
+            })
+            
+            return Disposables.create()
+        })
+    }
+    
+    private func load(queryFilter: String, param: String) -> Single<Any> {
+        return Single.create(subscribe: { [unowned self] (single) in
+            
+            let collection = self.collectionString
+            do {
+                try self.validator.saveQuery(filterParams: (queryFilter, param), collection: collection)
+            } catch {
+                single(.error(error))
+                return Disposables.create()
+            }
+            
+            
+            let colRef = self.db.collection(collection ?? "")
+            colRef.whereField(queryFilter, isEqualTo:param)
+                .getDocuments(completion: { [weak self] (snapshot, error) in
                     self?.onError(single, error: error)
                     
                     do {
@@ -78,144 +113,109 @@ class ExecutorSingle: ExecutorFirestoreEntity {
                         return
                     }
                     
-                    if let objects = snapshot?.documents.map({ (single) -> JSON in
-                        return JSON(self?.composeObject(document: single) ?? [:])
+                    if let objects = snapshot?.documents.map({ (single) -> [String: Any] in
+                        return self?.composeObject(document: single) ?? [:]
                     }) {
                         single(.success(objects))
                     }
                 })
-                
-                return Disposables.create()
-            })
-    }
-    
-    private func load(queryFilter: String, param: String) -> Single<Any> {
-            return Single.create(subscribe: { (single) in
-                
-                let collection = self.collectionString
-                do {
-                    try self.validator.saveQuery(filterParams: (queryFilter, param), collection: collection)
-                } catch {
-                    single(.error(error))
-                    return Disposables.create()
-                }
-                
-                
-                let colRef = self.db.collection(collection ?? "")
-                colRef.whereField(queryFilter, isEqualTo:param)
-                    .getDocuments(completion: { [weak self] (snapshot, error) in
-                        self?.onError(single, error: error)
-                        
-                        do {
-                            try self?.validator.saveSnapshotDocuments(documents: snapshot?.documents)
-                        } catch {
-                            self?.onError(single, error: error)
-                            return
-                        }
-                        
-                        if let objects = snapshot?.documents.map({ (single) -> [String: Any] in
-                            return self?.composeObject(document: single) ?? [:]
-                        }) {
-                            single(.success(objects))
-                        }
-                    })
-                return Disposables.create()
+            return Disposables.create()
         })
     }
     
     func load(singleDoc: String) -> Single<Any> {
-            return Single.create(subscribe: { (single) in
-                
-                let collection = self.collectionString
+        return Single.create(subscribe: { [unowned self] (single) in
+            
+            let collection = self.collectionString
+            
+            do {
+                try self.validator.saveSingleDoc(collection: collection, singleDoc: singleDoc)
+            } catch {
+                single(.error(error))
+                return Disposables.create()
+            }
+            
+            let colRef = self.db.collection(collection ?? "")
+            colRef.document(singleDoc).getDocument(completion: { [weak self] (snapshot, error) in
+                self?.onError(single, error: error)
                 
                 do {
-                    try self.validator.saveSingleDoc(collection: collection, singleDoc: singleDoc)
+                    try self?.validator.saveSnapshotData(snapshot: snapshot)
                 } catch {
-                    single(.error(error))
-                    return Disposables.create()
+                    self?.onError(single, error: error)
+                    return
                 }
                 
-                let colRef = self.db.collection(collection ?? "")
-                colRef.document(singleDoc).getDocument(completion: { [weak self] (snapshot, error) in
-                    self?.onError(single, error: error)
+                if var object: [String:Any] = snapshot?.data() {
                     
-                    do {
-                        try self?.validator.saveSnapshotData(snapshot: snapshot)
-                    } catch {
-                        self?.onError(single, error: error)
-                        return
-                    }
-                    
-                    if var object: [String:Any] = snapshot?.data() {
-                        
-                        object["uid"] = snapshot?.documentID
-                        object["id"] =  snapshot?.documentID
-                        return single(.success(object))
-                    }
-                })
-                return Disposables.create()
+                    object["uid"] = snapshot?.documentID
+                    object["id"] =  snapshot?.documentID
+                    return single(.success(object))
+                }
             })
+            return Disposables.create()
+        })
     }
     
     private func load(argTrain: [(String, String)]) -> Single<Any> {
-            return Single.create(subscribe: { (single) in
-                let collection = self.collectionString
+        return Single.create(subscribe: { [unowned self] (single) in
+            let collection = self.collectionString
+            
+            do {
+                try self.validator.saveArgTrain(traitList: argTrain, collection: collection)
+            } catch {
+                single(.error(error))
+                return Disposables.create()
+            }
+            
+            
+            let colRef = self.db.collection(collection ?? "")
+            var query = colRef.whereField((argTrain.first?.0)!, isEqualTo: (argTrain.first?.1)!)
+            
+            self.create(query: &query, argTrain: argTrain)
+            self.orderQuery(&query)
+            
+            query.getDocuments(completion: { [weak self] (snapshot, error) in
+                self?.onError(single, error: error)
                 
                 do {
-                    try self.validator.saveArgTrain(traitList: argTrain, collection: collection)
+                    try self?.validator.saveSnapshotDocuments(documents: snapshot?.documents)
                 } catch {
-                    single(.error(error))
-                    return Disposables.create()
+                    self?.onError(single, error: error)
+                    return
                 }
                 
-                
-                let colRef = self.db.collection(collection ?? "")
-                var query = colRef.whereField((argTrain.first?.0)!, isEqualTo: (argTrain.first?.1)!)
-                
-                self.create(query: &query, argTrain: argTrain)
-                self.orderQuery(&query)
-                
-                query.getDocuments(completion: { [weak self] (snapshot, error) in
-                    self?.onError(single, error: error)
-                    
-                    do {
-                        try self?.validator.saveSnapshotDocuments(documents: snapshot?.documents)
-                    } catch {
-                        self?.onError(single, error: error)
-                        return
-                    }
-                    
-                    if let objects = snapshot?.documents.map({ (document) -> JSON in
-                        return JSON(self?.composeObject(document: document) ?? [:])
-                    }) {
-                        single(.success(objects))
-                    }
-                })
-                return Disposables.create()
+                if let objects = snapshot?.documents.map({ (document) -> JSON in
+                    return JSON(self?.composeObject(document: document) ?? [:])
+                }) {
+                    single(.success(objects))
+                }
             })
+            return Disposables.create()
+        })
     }
     
     private func updateDocument(dataDict: [String: Any]?, docID: String?) -> Single<Any> {
-            return Single.create(subscribe: { (single) in
-                
-                let collection = self.collectionString
-                do {
-                    try self.validator.saveUploadData(data: dataDict, docRef: docID, collection: collection)
-                } catch {
-                    single(.error(error))
-                    return Disposables.create()
-                }
-                
-                
-                let docRef = self.db.collection(collection ?? "").document(docID ?? "")
-                docRef.setData(dataDict ?? [:], merge: true, completion: { [weak self] (error) in
-                    self?.onError(single, error: error)
-                    
-                    single(.success(true))
-                })
-                
+        return Single.create(subscribe: { [unowned self] (single) in
+            
+            let collection = self.collectionString
+            do {
+                try self.validator.saveUploadData(data: dataDict, docRef: docID, collection: collection)
+            } catch {
+                single(.error(error))
                 return Disposables.create()
+            }
+            
+            
+            let docRef = self.db.collection(collection ?? "").document(docID ?? "")
+            docRef.setData(dataDict ?? [:], merge: true, completion: { [weak self] (error) in
+                self?.onError(single, error: error)
+                
+                single(.success(true))
             })
+            
+            return Disposables.create()
+        })
     }
     
     
@@ -238,7 +238,7 @@ class ExecutorSingle: ExecutorFirestoreEntity {
                 })
             } else {
                 
-               let id = self.db.collection(col).addDocument(data: data, completion: { (error) in
+                let id = self.db.collection(col).addDocument(data: data, completion: { (error) in
                     if let err = error {
                         single(.error(err))
                     }
@@ -253,7 +253,7 @@ class ExecutorSingle: ExecutorFirestoreEntity {
     }
     
     func loadSingleDoc(docID: String, collection: String) -> Single<[String: Any]> {
-        return Single.create(subscribe: { (single) in
+        return Single.create(subscribe: { [unowned self] (single) in
             
             let colRef = self.db.collection(collection)
             colRef.document(docID).getDocument(completion: { [weak self] (snapshot, error) in
@@ -275,6 +275,53 @@ class ExecutorSingle: ExecutorFirestoreEntity {
                     single(.success(object))
                 }
             })
+            return Disposables.create()
+        })
+    }
+    
+    func loadSingleDoc(traits: TraitList, collection: String) -> Single<[String: Any]> {
+        return Single.create(subscribe: { [unowned self] (single) in
+            
+            do {
+                try self.validator.saveArgTrain(traitList: traits, collection: collection)
+            } catch {
+                single(.error(error))
+                return Disposables.create()
+            }
+            
+            if let traitCollection = traits, traitCollection.count > 0 {
+                let colRef = self.db.collection(collection)
+                var query = colRef.whereField(traitCollection[0].fieldName,
+                                              isEqualTo: traitCollection[0].expectedValue)
+                
+                self.create(query: &query, argTrain: traitCollection)
+                self.orderQuery(&query)
+                
+                query.getDocuments(completion: { [weak self] (snapshot, error) in
+                    
+                    guard let `self` = self else { return }
+                    
+                    if let snpsht = snapshot {
+                        
+                        if snpsht.documents.count > 0 {
+                            if snpsht.documents.count < 2 {
+                                let object = self.composeObject(document: snpsht.documents[0])
+                                single(.success(object))
+                            } else {
+                                if let lastObject = snpsht.documents.last {
+                                    let object = self.composeObject(document: lastObject)
+                                    single(.success(object))
+                                }
+                            }
+                        }
+                    } else {
+                        if let err = error {
+                            single(.error(err))
+                        }
+                    }
+                })
+            }
+            
             return Disposables.create()
         })
     }
