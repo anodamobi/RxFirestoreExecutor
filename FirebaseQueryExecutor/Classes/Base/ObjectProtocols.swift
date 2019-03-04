@@ -28,7 +28,6 @@ public protocol BaseTypeProtocol {
 }
 
 public protocol SelfExecutable {
-    associatedtype ObjectType
     
     typealias ErrorBlock = (_ error: Error)->()
     typealias UpdateBlock = ()->()
@@ -45,6 +44,11 @@ public protocol SelfExecutable {
                     _ errorBlock: @escaping ErrorBlock)
     
     func pullObject(trait: QueryTargetProtocol.Trait,
+                    _ updated: @escaping UpdateBlock,
+                    _ errorBlock: @escaping ErrorBlock)
+    
+    
+    func pullObject(with subCollection: String,
                     _ updated: @escaping UpdateBlock,
                     _ errorBlock: @escaping ErrorBlock)
     
