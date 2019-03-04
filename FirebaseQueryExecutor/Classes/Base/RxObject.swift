@@ -51,13 +51,33 @@ open class RxObject: FEObject, SelfExecutable {
     public func pullObject(traits: QueryTargetProtocol.TraitList,
                            _ updated: @escaping UpdateBlock,
                            _ errorBlock: @escaping ErrorBlock) {
+        super.pull(traits)
+            .subscribe(onSuccess: { [weak self] (data) in
+            guard let `self` = self else {
+                updated()
+                return
+            }
+            self.map(data)
+            updated()
+        }) { (error) in
+            errorBlock(error)
+        }.disposed(by: bag)
         
     }
     
     public func pullObject(trait: QueryTargetProtocol.Trait,
                            _ updated: @escaping UpdateBlock,
                            _ errorBlock: @escaping ErrorBlock) {
-        
+        super.pull([trait]).subscribe(onSuccess: { [weak self] (data) in
+            guard let `self` = self else {
+                updated()
+                return
+            }
+            self.map(data)
+            updated()
+        }) { (error) in
+            errorBlock(error)
+        }.disposed(by: bag)
     }
     
     //MARK: Push
