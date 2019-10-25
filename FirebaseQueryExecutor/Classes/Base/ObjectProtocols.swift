@@ -32,7 +32,7 @@ public protocol SelfExecutable {
     typealias ErrorBlock = (_ error: Error)->()
     typealias UpdateBlock = ()->()
     
-    // Update block needed to make action whenever model updated, or to make sync when several model updated at a same time.
+    //Update block needed to make action whenever model updated, or to make sync when several model updated at a same time.
     //Error block is needed in case update was done with errors. In this case we will still work with old model.
     func pullObject(updated: @escaping UpdateBlock, _ errorBlock: @escaping ErrorBlock)
     func pushObject(updated: @escaping UpdateBlock, _ errorBlock: @escaping ErrorBlock)
@@ -56,4 +56,6 @@ public protocol SelfExecutable {
     func pushObject(subObjects: [FEObject],
                     _ updated: @escaping UpdateBlock,
                     _ errorBlock: @escaping ErrorBlock)
+    
+    func delete(_ errorBlock: @escaping ErrorBlock)
 }

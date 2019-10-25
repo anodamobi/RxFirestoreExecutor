@@ -54,9 +54,27 @@ class ExecutorSingle: ExecutorFirestoreEntity {
         return loadCollection()
     }
     
+    func removeDocument(_ id: String) -> Single<Completable> {
+        return Single.create { [weak self] (completable) -> Disposable in
+            
+            guard let collection = self?.collectionString else { return Disposables.create() }
+            
+            let colRef = self?.db.collection(collection)
+            colRef?.document(id).delete(completion: { (error) in
+                if let err = error {
+                    completable(.error(err))
+                }
+            })
+            
+            return Disposables.create()
+        }
+    }
+    
     
     private func loadCollection() -> Single<Any> {
-        return Single.create(subscribe: { [unowned self] (single) in
+        return Single.create(subscribe: { [weak self] (single) in
+            
+            guard let `self` = self else { return Disposables.create() }
             
             let collection = self.collectionString
             do {
@@ -146,7 +164,7 @@ class ExecutorSingle: ExecutorFirestoreEntity {
                     return
                 }
                 
-                if var object: [String:Any] = snapshot?.data() {
+                if var object: [String: Any] = snapshot?.data() {
                     
                     object["uid"] = snapshot?.documentID
                     object["id"] =  snapshot?.documentID

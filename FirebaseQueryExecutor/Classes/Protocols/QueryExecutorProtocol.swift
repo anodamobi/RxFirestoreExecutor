@@ -26,7 +26,7 @@ public protocol QueryExecutorProtocol {
     typealias NestedCollectionList = [(document:String, collection: String)]?
     typealias UpdateableData = (String?, [String: Any]?)
     typealias SingleDocument = String?
-    typealias TraitList = [Trait]?
+    typealias TraitList = [(fieldName: String, expectedValue: String)]?
     typealias CollectionRef = String
     typealias ConditionPair = (firstConstraint:Trait, secondConstraint:Trait)?
     typealias Trait = (fieldName: String, expectedValue: String)

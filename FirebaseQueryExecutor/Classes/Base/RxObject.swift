@@ -22,7 +22,7 @@ import Foundation
 import RxSwift
 
 @objcMembers
-open class RxObject: FEObject, SelfExecutable {
+open class RxObject: FEObject {
     
     let bag = DisposeBag()
     
@@ -30,105 +30,68 @@ open class RxObject: FEObject, SelfExecutable {
     
     //MARK: pull
     
-    public func pullObject(updated: @escaping UpdateBlock,
-                           _ errorBlock: @escaping ErrorBlock) {
-        
-        super.pull()
-            .subscribe(onSuccess: { [weak self] (data) in
-                guard let `self` = self else {
-                    updated()
-                    return
-                }
-                
-                self.map(data)
-                updated()
-                
-            }) { (error) in
-                errorBlock(error)
-            }.disposed(by: bag)
-    }
-    
-    public func pullObject(traits: QueryTargetProtocol.TraitList,
-                           _ updated: @escaping UpdateBlock,
-                           _ errorBlock: @escaping ErrorBlock) {
-        super.pull(traits)
-            .subscribe(onSuccess: { [weak self] (data) in
-            guard let `self` = self else {
-                updated()
-                return
-            }
-            self.map(data)
-            updated()
+    public func pull(updated: UpdateBlock? = nil,
+                     _ errorBlock: ErrorBlock? = nil) {
+        pullObject(updated: {
+            updated?()
         }) { (error) in
-            errorBlock(error)
-        }.disposed(by: bag)
-        
+            errorBlock?(error)
+        }
     }
     
-    public func pullObject(trait: QueryTargetProtocol.Trait,
-                           _ updated: @escaping UpdateBlock,
-                           _ errorBlock: @escaping ErrorBlock) {
-        super.pull([trait]).subscribe(onSuccess: { [weak self] (data) in
-            guard let `self` = self else {
-                updated()
-                return
-            }
-            self.map(data)
-            updated()
+    public func pull(traits: QueryTargetProtocol.TraitList,
+    _ updated: UpdateBlock? = nil,
+    _ errorBlock: ErrorBlock? = nil) {
+        pullObject(traits: traits, {
+            updated?()
         }) { (error) in
-            errorBlock(error)
-        }.disposed(by: bag)
+            errorBlock?(error)
+        }
     }
     
-    //MARK: Push
-    
-    public func pushObject(updated: @escaping UpdateBlock,
-                           _ errorBlock: @escaping ErrorBlock) {
-        
-        super.push(self)
-            .subscribe(onSuccess: { [weak self] (data) in
-                guard let `self` = self else {
-                    updated()
-                    return
-                }
-                
-                self.map(data)
-                updated()
-                
-            }) { (error) in
-                errorBlock(error)
-            }.disposed(by: bag)
+    public func pull(trait: QueryTargetProtocol.Trait,
+    _ updated: UpdateBlock? = nil,
+    _ errorBlock: ErrorBlock? = nil) {
+        pullObject(trait: trait, {
+            updated?()
+        }) { (error) in
+            errorBlock?(error)
+        }
     }
     
-    public func pushObject(subObjects: [FEObject],
-                           _ updated: @escaping UpdateBlock,
-                           _ errorBlock: @escaping ErrorBlock) {
-        
+    public func pull(with subCollection: String,
+                     _ updated: RxObject.UpdateBlock? = nil,
+                     _ errorBlock: RxObject.ErrorBlock? = nil) {
+        pullObject(with: subCollection, {
+            updated?()
+        }) { (error) in
+            errorBlock?(error)
+        }
     }
     
-    //MARK Observe
+    public func push(updated: UpdateBlock? = nil,
+                     _ errorBlock: ErrorBlock? = nil) {
+        pushObject(updated: {
+            updated?()
+        }) { (error) in
+            errorBlock?(error)
+        }
+    }
     
-    public func observe(updated: @escaping UpdateBlock,
-                        _ errorBlock: @escaping ErrorBlock) {
-        
-        super.observe()
-            .subscribe(onNext: { [weak self] (data) in
-                guard let `self` = self else {
-                    updated()
-                    return
-                }
-                
-                self.map(data)
-                updated()
-                
-                }, onError: { (error) in
-                    errorBlock(error)
-            }).disposed(by: bag)
+    //TODO: is check necessity
+    public func push(subObjects: [FEObject],
+                     _ updated: UpdateBlock? = nil,
+                     _ errorBlock: ErrorBlock? = nil) {
+        pushObject(subObjects: subObjects, {
+            updated?()
+        }) { (error) in
+            errorBlock?(error)
+        }
     }
     
     //Self mapping from dictionary to Object
     //This will work only if variables are Dynamic
-    private func map(_ result: [String: Any]) {
+    internal func map(_ result: [String: Any]) {
         let keys = result.keys
         for key in keys {
             
@@ -150,3 +113,5 @@ open class RxObject: FEObject, SelfExecutable {
         }
     }
 }
+
+

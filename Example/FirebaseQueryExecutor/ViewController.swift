@@ -33,6 +33,8 @@ class ViewController: UIViewController {
         
         model = Model()
         
+        model?.pull()
+        
         model?.pushObject(updated: {
             
         }) { (error) in
