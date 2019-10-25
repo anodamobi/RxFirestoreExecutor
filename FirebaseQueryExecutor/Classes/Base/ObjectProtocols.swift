@@ -52,6 +52,10 @@ public protocol SelfExecutable {
                     _ updated: @escaping UpdateBlock,
                     _ errorBlock: @escaping ErrorBlock)
     
+    func pullFrom(object: FEObject)
+    
+    func pushTo(object: FEObject)
+    
     //Conditional pushes
     func pushObject(subObjects: [FEObject],
                     _ updated: @escaping UpdateBlock,
