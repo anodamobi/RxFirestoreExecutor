@@ -52,9 +52,11 @@ public protocol SelfExecutable {
                     _ updated: @escaping UpdateBlock,
                     _ errorBlock: @escaping ErrorBlock)
     
-    func pullFrom(object: FEObject)
+    func pullFrom(object: FEObject,
+                  _ errorBlock: @escaping ErrorBlock)
     
-    func pushTo(object: FEObject)
+    func pushTo(object: FEObject,
+                _ errorBlock: @escaping ErrorBlock)
     
     //Conditional pushes
     func pushObject(subObjects: [FEObject],
@@ -62,4 +64,7 @@ public protocol SelfExecutable {
                     _ errorBlock: @escaping ErrorBlock)
     
     func delete(_ errorBlock: @escaping ErrorBlock)
+    
+    func delete(from object: FEObject,
+                _ errorBlock: @escaping ErrorBlock)
 }

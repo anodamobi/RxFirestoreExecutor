@@ -75,18 +75,24 @@ extension RxObject: SelfExecutable {
     
     //TODO: To test
     //in completion can be returned initial collection
-    public func pullFrom(object: FEObject) {
+    public func pullFrom(object: FEObject,
+                         _ errorBlock: @escaping ErrorBlock) {
         collection = "\(object.collection)/\(object.itemID)/\(collection)"
-        pullObject(updated: { }) { (error) in }
+        pullObject(updated: { }) { (error) in
+            errorBlock(error)
+        }
     }
     
     //MARK: Push
     
     
-    //TODO: Tot test
-    public func pushTo(object: FEObject) {
+    //TODO: To test
+    public func pushTo(object: FEObject,
+                       _ errorBlock: @escaping ErrorBlock) {
         collection = "\(object.collection)/\(object.itemID)/\(collection)"
-        pushObject(updated: { }) { (error) in }
+        pushObject(updated: { }) { (error) in
+            errorBlock(error)
+        }
     }
     
     
@@ -146,5 +152,15 @@ extension RxObject: SelfExecutable {
         }) { (error) in
             errorBlock(error)
         }.disposed(by: bag)
+    }
+    
+    public func delete(from object: FEObject,
+                       _ errorBlock: @escaping ErrorBlock) {
+        
+        collection = "\(object.collection)/\(object.itemID)/\(collection)"
+        
+        delete { (error) in
+            errorBlock(error)
+        }
     }
 }
