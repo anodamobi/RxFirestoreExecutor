@@ -239,7 +239,6 @@ class ExecutorSingle: ExecutorFirestoreEntity {
     
     //    MARK: self-executing methods
     
-    //TODO: Pavel: Prichesat' proverit'
     func pushObject(col: String, docID: String, data: [String: Any]) -> Single<String> {
         
         return Single.create(subscribe: { (single) in
