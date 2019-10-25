@@ -1,7 +1,7 @@
 
 Pod::Spec.new do |s|
     s.name             = 'RxFirestoreExecutor'
-    s.version          = '0.1.6'
+    s.version          = '0.1.7'
     s.summary          = 'RxFirestoreExecutor is a simplified way to work Firebase/Firestore Queries.'
     
     s.description      = <<-DESC
