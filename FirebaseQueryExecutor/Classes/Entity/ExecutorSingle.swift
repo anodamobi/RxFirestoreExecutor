@@ -56,7 +56,8 @@ class ExecutorSingle: ExecutorFirestoreEntity {
     
     
     private func loadCollection() -> Single<Any> {
-            return Single.create(subscribe: { (single) in
+            return Single.create(subscribe: { [weak self] (single) in
+                guard let `self` = self else { return Disposables.create() }
                 
                 let collection = self.collectionString
                 do {
@@ -90,7 +91,8 @@ class ExecutorSingle: ExecutorFirestoreEntity {
     }
     
     private func load(queryFilter: String, param: String) -> Single<Any> {
-            return Single.create(subscribe: { (single) in
+            return Single.create(subscribe: { [weak self] (single) in
+                guard let `self` = self else { return Disposables.create() }
                 
                 let collection = self.collectionString
                 do {
@@ -124,7 +126,8 @@ class ExecutorSingle: ExecutorFirestoreEntity {
     }
     
     private func load(singleDoc: String) -> Single<Any> {
-            return Single.create(subscribe: { (single) in
+            return Single.create(subscribe: { [weak self] (single) in
+                guard let `self` = self else { return Disposables.create() }
                 
                 let collection = self.collectionString
                 
@@ -158,7 +161,9 @@ class ExecutorSingle: ExecutorFirestoreEntity {
     }
     
     private func load(argTrain: [(String, String)]) -> Single<Any> {
-            return Single.create(subscribe: { (single) in
+            return Single.create(subscribe: { [weak self] (single) in
+                guard let `self` = self else { return Disposables.create() }
+                
                 let collection = self.collectionString
                 
                 do {
@@ -196,7 +201,8 @@ class ExecutorSingle: ExecutorFirestoreEntity {
     }
     
     private func updateDocument(dataDict: [String: Any]?, docID: String?) -> Single<Any> {
-            return Single.create(subscribe: { (single) in
+            return Single.create(subscribe: { [weak self] (single) in
+                guard let `self` = self else { return Disposables.create() }
                 
                 let collection = self.collectionString
                 do {

@@ -109,7 +109,7 @@ DEPENDENCIES:
   - RxFirestoreExecutor (from `../`)
 
 SPEC REPOS:
-  https://github.com/cocoapods/specs.git:
+  https://github.com/CocoaPods/Specs.git:
     - BoringSSL-GRPC
     - Firebase
     - FirebaseAnalytics
@@ -152,10 +152,10 @@ SPEC CHECKSUMS:
   nanopb: 2901f78ea1b7b4015c860c2fdd1ea2fee1a18d48
   Protobuf: 1eb9700044745f00181c136ef21b8ff3ad5a0fd5
   RxAtomic: eacf60db868c96bfd63320e28619fe29c179656f
-  RxFirestoreExecutor: 7ddca3ccb30a278dd68fdc02cecc894ba5dd05aa
+  RxFirestoreExecutor: b1378b206f53666fb849c2f46ce8f19f62243d6b
   RxSwift: 5976ecd04fc2fefd648827c23de5e11157faa973
   SwiftyJSON: c4bcba26dd9ec7a027fc8eade48e2c911f229e96
 
 PODFILE CHECKSUM: cae425cbadd71fa4f71c49858c4fd82bf632370e
 
-COCOAPODS: 1.5.3
+COCOAPODS: 1.8.4
