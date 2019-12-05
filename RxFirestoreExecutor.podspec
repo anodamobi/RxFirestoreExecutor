@@ -1,7 +1,7 @@
 
 Pod::Spec.new do |s|
     s.name             = 'RxFirestoreExecutor'
-    s.version          = '0.1.6'
+    s.version          = '0.1.7'
     s.summary          = 'RxFirestoreExecutor is a simplified way to work Firebase/Firestore Queries.'
     
     s.description      = <<-DESC
@@ -15,7 +15,7 @@ Pod::Spec.new do |s|
     s.author           = { 'Pavel Mosunov' => 'pavel.mosunov@anoda.mobi' }
     s.source           = { :git => 'https://github.com/anodamobi/RxFirestoreExecutor.git', :tag => s.version.to_s }
     
-    s.ios.deployment_target = '10.0'
+    s.ios.deployment_target = '9.0'
     s.static_framework = true
     
     s.source_files = 'FirebaseQueryExecutor/Classes/*', 'FirebaseQueryExecutor/Classes/**/*'

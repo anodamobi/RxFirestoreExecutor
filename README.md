@@ -72,6 +72,70 @@ executor.request(.updateData(id: uid))
 
 Handle request/observe with RxSwift .subscribe/.observe
 
+UPD: branche base-class (WIP) can simplify working with document.
+
+Small how-to:
+```
+class Example: RxObject {
+    dynamic var varableString: String = ""
+    dynamic var variableFloat: Float = 0.0
+    dynamic var varableInt: Int = 10
+    dynamic var varableDouble: Double = 0.0
+    
+    required init() {
+        super.init()
+        collection = "firebase_collection"
+    }
+}
+```
+Beside this you can use other `RXObjects` as property.
+
+```
+class Example: RxObject {
+    dynamic var varableString: String = ""
+    dynamic var variableFloat: Float = 0.0
+    dynamic var varableInt: Int = 10
+    dynamic var varableDouble: Double = 0.0
+    dynamic var nestedObject = NestedExample()
+    
+    required init() {
+        super.init()
+        collection = "firebase_collection"
+    }
+}
+
+class NestedExample: RxObject {
+    dynamic var varableString: String = ""
+    dynamic var variableFloat: Float = 0.0
+    dynamic var varableInt: Int = 10
+    dynamic var varableDouble: Double = 0.0
+    
+    required init() {
+        //in this case, collection property can be empty.
+        super.init()
+    }
+}
+```
+So last thing left is to read/write or listen to objectes stored on Firebase.
+
+```
+    let item = Example()
+    item.push()
+    
+    item.pull()
+    
+    item.(updated: {
+        // observed udates
+    }) { (error) in
+        //handle errors.
+    }
+    
+    item.delete { (error) in
+        //handle error
+    }
+```
+Updated closure and Error closure are available at pull/push options as well.
+
 That's all! You do not need to unsubscribe from Firebase Listener on executor's observe - on object death it will be
 removed automatically.
 

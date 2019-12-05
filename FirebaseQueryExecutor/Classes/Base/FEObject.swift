@@ -72,6 +72,11 @@ open class FEObject: NSObject, QueryExecutorProtocol, BaseTypeProtocol {
             })
     }
     
+    func delete() -> Single<Completable> {
+        let single = ExecutorSingle()
+        return single.removeDocument(self.itemID)
+    }
+    
 }
 
 enum ModelError: Error {
