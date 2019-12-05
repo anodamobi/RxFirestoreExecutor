@@ -76,6 +76,11 @@ enum Target {
 }
 
 extension Target: QueryTargetProtocol {
+    
+    var delete: SingleDocument {
+        return nil
+    }
+    
     var collection: CollectionRef {
         return "collection"
     }
@@ -103,4 +108,5 @@ extension Target: QueryTargetProtocol {
     var order: OrderTrait {
         return nil
     }
+
 }

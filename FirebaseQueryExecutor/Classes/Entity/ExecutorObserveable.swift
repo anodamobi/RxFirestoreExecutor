@@ -50,18 +50,18 @@ class ExecutorObserveable: ExecutorFirestoreEntity {
     }
     
     func observeCollection() -> Observable<Any> {
-        return Observable.create({ (observe) in
+        return Observable.create({ [weak self] (observe) in
             
             do {
-                try self.validator.saveSingle(collection: self.collectionString ?? "")
+                try self?.validator.saveSingle(collection: self?.collectionString ?? "")
             } catch {
                 observe.onError(error)
                 return Disposables.create()
             }
             
             
-            let colRef = self.db.collection(self.collectionString!)
-            let listener = colRef.addSnapshotListener({ [weak self] (snapshot, error) in
+            let colRef = self?.db.collection(self?.collectionString! ?? "")
+            let listener = colRef?.addSnapshotListener({ [weak self] (snapshot, error) in
                 self?.onError(observe, error: error)
                 
                 do {
@@ -78,26 +78,26 @@ class ExecutorObserveable: ExecutorFirestoreEntity {
                 }
             })
             return Disposables.create {
-                listener.remove()
+                listener?.remove()
             }
         })
     }
     
     func observeSingleDoc(documentID: String) -> Observable<Any> {
-        return Observable.create({ (observe) in
+        return Observable.create({ [weak self] (observe) in
             
-            let collection = self.collectionString
+            let collection = self?.collectionString
             do {
-                try self.validator.saveSingleDoc(collection: collection, singleDoc: documentID)
+                try self?.validator.saveSingleDoc(collection: collection, singleDoc: documentID)
             } catch {
                 observe.onError(error)
                 return Disposables.create()
             }
             
             
-            let colRef = self.db.collection(collection ?? "").document(documentID)
+            let colRef = self?.db.collection(collection ?? "").document(documentID)
             
-            let listener = colRef.addSnapshotListener({ [weak self] (snapshot, error) in
+            let listener = colRef?.addSnapshotListener({ [weak self] (snapshot, error) in
                 self?.onError(observe, error: error)
                 
                 do {
@@ -115,29 +115,29 @@ class ExecutorObserveable: ExecutorFirestoreEntity {
                 
             })
             return Disposables.create {
-                listener.remove()
+                listener?.remove()
             }
         })
     }
     
     func observeDoc(argTrain: TraitList) -> Observable<Any> {
-        return Observable.create({ (observe) -> Disposable in
+        return Observable.create({ [weak self] (observe) -> Disposable in
             
-            let collection = self.collectionString
+            let collection = self?.collectionString
             do {
-                try self.validator.saveArgTrain(traitList: argTrain, collection: collection)
+                try self?.validator.saveArgTrain(traitList: argTrain, collection: collection)
             } catch {
                 observe.onError(error)
                 return Disposables.create()
             }
             
-            let colRef = self.db.collection(collection ?? "")
-            var query = colRef.whereField((argTrain?.first?.0) ?? "", isEqualTo: (argTrain?.first?.1) ?? "")
+            let colRef = self?.db.collection(collection ?? "")
+            var query = colRef?.whereField((argTrain?.first?.0) ?? "", isEqualTo: (argTrain?.first?.1) ?? "")
             
-            self.create(query: &query, argTrain: argTrain)
-            self.orderQuery(&query)
+            self?.create(query: &query, argTrain: argTrain)
+            self?.orderQuery(&query)
             
-            let listener = query.addSnapshotListener({ [weak self] (snapshot, error) in
+            let listener = query?.addSnapshotListener({ [weak self] (snapshot, error) in
                 self?.onError(observe, error: error)
                 
                 do {
@@ -158,7 +158,7 @@ class ExecutorObserveable: ExecutorFirestoreEntity {
             })
             
             return Disposables.create {
-                listener.remove()
+                listener?.remove()
             }
         })
     }
@@ -177,18 +177,18 @@ class ExecutorObserveable: ExecutorFirestoreEntity {
     
     
     private func observeNestedCollection(documentID: String, nestedCollection:String) -> Observable<Any> {
-        return Observable.create({ (observe) in
-            let collection = self.collectionString
+        return Observable.create({ [weak self] (observe) in
+            let collection = self?.collectionString
             do {
-                try self.validator.saveNested(collection: collection, parentDoc: documentID, nestedCollection: nestedCollection)
+                try self?.validator.saveNested(collection: collection, parentDoc: documentID, nestedCollection: nestedCollection)
             } catch {
                 observe.onError(error)
                 return Disposables.create()
             }
             
-            let colRef = self.db.collection(collection ?? "").document(documentID).collection(nestedCollection)
+            let colRef = self?.db.collection(collection ?? "").document(documentID).collection(nestedCollection)
             
-            let listener = colRef.addSnapshotListener({ [weak self] (snapshot, error) in
+            let listener = colRef?.addSnapshotListener({ [weak self] (snapshot, error) in
                 self?.onError(observe, error: error)
                 
                 let objects = snapshot?.documentChanges.map({ (diff) -> [String: Any] in
@@ -200,7 +200,7 @@ class ExecutorObserveable: ExecutorFirestoreEntity {
             })
             
             return Disposables.create {
-                listener.remove()
+                listener?.remove()
             }
         })
     }
@@ -208,11 +208,11 @@ class ExecutorObserveable: ExecutorFirestoreEntity {
 //    MARK: self-observing methods
     
     func observeSingle(documentID: String, collection: String) -> Observable<[String: Any]> {
-        return Observable.create({ (observe) in
+        return Observable.create({ [weak self] (observe) in
             
-            let colRef = self.db.collection(collection).document(documentID)
+            let colRef = self?.db.collection(collection).document(documentID)
             
-            let listener = colRef.addSnapshotListener({ [weak self] (snapshot, error) in
+            let listener = colRef?.addSnapshotListener({ [weak self] (snapshot, error) in
                 
                 if let err = error {
                     observe.onError(err)
@@ -232,7 +232,7 @@ class ExecutorObserveable: ExecutorFirestoreEntity {
                 
             })
             return Disposables.create {
-                listener.remove()
+                listener?.remove()
             }
         })
     }

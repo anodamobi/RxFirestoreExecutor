@@ -49,4 +49,6 @@ public protocol QueryTargetProtocol: QueryExecutorProtocol {
     // @param isOrderSpecified - defines useage of next argument. On True isAscending will be taken into account
     // @param isAscending - defines order as Descending or Not.
     var order: OrderTrait { get }
+    
+    var delete: SingleDocument { get }
 }

@@ -57,17 +57,17 @@ class ExecutorFirestoreEntity: QueryExecutorProtocol {
         return doc
     }
     
-    func orderQuery(_ query: inout Query) {
+    func orderQuery(_ query: inout Query?) {
         if let order = self.order {
             if order.isOrderSpecified {
-                query.order(by: order.orderString, descending: order.isAscending)
+                query?.order(by: order.orderString, descending: order.isAscending)
             } else {
-                query.order(by: order.orderString)
+                query?.order(by: order.orderString)
             }
         }
     }
     
-    func create(query: inout Query, argTrain: TraitList) {
+    func create(query: inout Query?, argTrain: TraitList) {
         
         switch condition {
         case .and:
@@ -75,7 +75,7 @@ class ExecutorFirestoreEntity: QueryExecutorProtocol {
                 for index in 1..<amount {
                     if let fieldName: String = argTrain?[index].fieldName {
                         if let expectedValue: String = argTrain?[index].expectedValue {
-                            query = query.whereField(fieldName, isEqualTo: expectedValue)
+                            query = query?.whereField(fieldName, isEqualTo: expectedValue)
                         }
                     }
                     
@@ -84,8 +84,8 @@ class ExecutorFirestoreEntity: QueryExecutorProtocol {
         case .or: //TODO: pavel -Will be used little bit later
             if  let amount = argTrain?.count, amount > 1 {
                 for var index in 1..<amount {
-                    query = query.whereField(argTrain![index].fieldName, isGreaterThan: argTrain![index].expectedValue)
-                    query = query.whereField(argTrain![index + 1].fieldName, isGreaterThan: argTrain![index + 1].expectedValue)
+                    query = query?.whereField(argTrain![index].fieldName, isGreaterThan: argTrain![index].expectedValue)
+                    query = query?.whereField(argTrain![index + 1].fieldName, isGreaterThan: argTrain![index + 1].expectedValue)
                     index += 1
                 }
             }
