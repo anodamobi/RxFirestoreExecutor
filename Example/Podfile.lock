@@ -97,8 +97,8 @@ PODS:
   - Protobuf (3.6.1)
   - RxAtomic (4.4.0)
   - RxFirestoreExecutor (0.1.6):
-    - Firebase (= 5.5.0)
-    - Firebase/Firestore (= 5.5.0)
+    - Firebase
+    - Firebase/Firestore
     - RxSwift (~> 4.0)
     - SwiftyJSON (~> 4.0)
   - RxSwift (4.4.0):
@@ -152,10 +152,10 @@ SPEC CHECKSUMS:
   nanopb: 2901f78ea1b7b4015c860c2fdd1ea2fee1a18d48
   Protobuf: 1eb9700044745f00181c136ef21b8ff3ad5a0fd5
   RxAtomic: eacf60db868c96bfd63320e28619fe29c179656f
-  RxFirestoreExecutor: 7ddca3ccb30a278dd68fdc02cecc894ba5dd05aa
+  RxFirestoreExecutor: f76afcb1a03478ed8de311fe17d813449fb1d926
   RxSwift: 5976ecd04fc2fefd648827c23de5e11157faa973
   SwiftyJSON: c4bcba26dd9ec7a027fc8eade48e2c911f229e96
 
 PODFILE CHECKSUM: 69df69ac626d23fa91633ead8d45ed141973a342
 
-COCOAPODS: 1.5.3
+COCOAPODS: 1.6.1
